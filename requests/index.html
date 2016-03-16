@@ -1,10 +1,51 @@
 <html>
 	<head>
-		<script src="requestes.js"></script> 	
+		<script src='https://api.mapbox.com/mapbox.js/v2.3.0/mapbox.js'></script>
+		<link href='https://api.mapbox.com/mapbox.js/v2.3.0/mapbox.css' rel='stylesheet' />
+		<script src="requestes.js"></script>
+		<style type="text/css">
+			
+			.boxes{
+				display: flex;
+			}
+
+			#arrow{
+				padding: 80px 5px;
+			}
+
+			.boxes textarea{
+				width: 350px;
+    			height: 200px;
+    		}
+
+    		.actions {
+    			margin: 5px;
+    		}
+
+    		#map{
+    			display: block;
+    			width: 710px;
+    			height: 300px;
+    		}
+
+		</style>
 	</head>
 	<body>
-		<textarea id="geocodes"></textarea>
-		<button onclick="requester.searchForGeocodes('geocodes')" >Geocode</button>
+		<div class="boxes">
+			<textarea id="addresses"></textarea>
+			<div id="arrow">></div>
+			<textarea id="geocodes" disabled></textarea>
+		</div>
+		<div class="actions">
+			<button onclick="requester.searchForGeocodes('addresses')" >Geocode</button>
+		</div>
+		<div id='map'>
+		</div>
+		<script>
+			L.mapbox.accessToken = requester.mapBoxToken;
+			var map = L.mapbox.map('map', 'mapbox.streets')
+			.setView([-23.4, -46.6], 8);
+		</script>
 	</body>
 </html>
 

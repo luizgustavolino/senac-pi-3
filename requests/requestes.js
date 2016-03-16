@@ -1,3 +1,5 @@
+// k-means
+
 
 var requester = {}
 
@@ -10,7 +12,12 @@ requester.searchForGeocodes = function(tagID) {
 	var lines = content.split("\n")
 
 	for (line in lines) {
-		requester.makeRequest(lines[line])
+		if (lines[line] != ""){
+			requester.makeRequest(lines[line])
+		}else{
+			alert("Preencha os endereços, um por linha\nExemplo: Avenida Paulista, 1000")
+			return
+		}
 	}
 	
 }
@@ -39,9 +46,24 @@ requester.makeRequest = function(address) {
 requester.digestAddress = function(addressObject){
 	if(addressObject.features.length > 0){
 		var latlong = addressObject.features[0].center
-		console.log(latlong)
+		var response = latlong[1]+", "+latlong[0]
+		requester.appendResponse("geocodes", response)
+
+		L.marker([latlong[1], latlong[0]], {
+    		icon: L.mapbox.marker.icon({
+        		'marker-size': 'large',
+        		'marker-symbol': 'circle',
+        		'marker-color': '#fa0'
+    	})}).addTo(map);
 	}
 }
 
+requester.clearResponse = function(divName){
+	var tag = document.getElementById(divName);
+	tag.value = ""
+}
 
-
+requester.appendResponse = function(divName, newContent){
+	var tag = document.getElementById(divName);
+	tag.value += newContent + "\n"
+}
