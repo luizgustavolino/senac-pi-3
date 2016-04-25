@@ -4,7 +4,7 @@ package br.senac.pi;
 import static java.lang.Math.sqrt;
 
 public class Coordenada {
-    
+
     private double latitude;
     private double longitude;
 
