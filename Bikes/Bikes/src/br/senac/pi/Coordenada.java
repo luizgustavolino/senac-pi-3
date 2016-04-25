@@ -2,7 +2,7 @@
 package br.senac.pi;
 
 public class Coordenada {
-    
+
     private double latitude;
     private double longitude;
 
@@ -11,7 +11,7 @@ public class Coordenada {
         this.longitude = longitude;
     }
     
-    static double distanciaEntre(Coordenada p1, Coordenada p2) {
+    public static double distanciaEntre(Coordenada p1, Coordenada p2) {
         // implementar
         return 0.0;
     }
