@@ -15,4 +15,14 @@ public class Aresta {
     public double tamanho(){
         return Coordenada.distanciaEntre(origem, destino);
     }
+    
+    public Coordenada pontoMedio(){
+        // implementar
+        return new Coordenada(0.0, 0.0);
+    }
+    
+    public boolean estaPertoDaCoordanada(Coordenada c){
+        //implementar
+        return false;
+    }
 }
