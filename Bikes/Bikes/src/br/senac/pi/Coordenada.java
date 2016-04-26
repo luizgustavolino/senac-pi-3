@@ -2,11 +2,15 @@
 package br.senac.pi;
 
 import static java.lang.Math.sqrt;
+import java.util.ArrayList;
 
 public class Coordenada {
 
     private double latitude;
     private double longitude;
+    
+    public ArrayList<Aresta> arestasPartindo;
+    public ArrayList<Aresta> arestasChegando;
 
     public Coordenada(double latitude, double longitude) {
         this.latitude = latitude;
