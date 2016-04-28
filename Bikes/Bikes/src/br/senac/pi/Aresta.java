@@ -28,11 +28,21 @@ public class Aresta {
     }
     
     public boolean estaPertoDaCoordanada(Coordenada c){
-        // implementar
+        // dando erro pois não esta reconhecendo o metodo ponto medio, acredito que depois de implementado não aconteça mais o erro. repare que eu calculo em origem e destino nesta ordem
+        double d1 = Coordenada.distanciaEntre(this.origem, Aresta.pontoMedio(this.origem, this.destino));
+        double d2 = Coordenada.distanciaEntre(this.origem, c);//aqui fiquei em duvida se a distancia é em relação a origem
+        return d2 <= d1;//não sei se isso funciona, mas acho q funciona sim
+        /*
+            if(d2 <= d1){
+                return true;
+            }
+            return false;
+        */
+        
         // d1 = pegue a distancia de origin até o ponto médio 
         // d2 = distancia entre a coordenada testada (c)
         // retorna se d2 <= d1 
-        return false;
+        //return false;
     }
     
     public double distanciaDaPerpendicularAoPonto(Coordenada c){
