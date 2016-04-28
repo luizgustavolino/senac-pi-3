@@ -18,8 +18,15 @@ public class Coordenada {
     }
     
     public static double distanciaEntre(Coordenada p1, Coordenada p2) {
-        double distancia = sqrt(Math.pow((p2.latitude - p1.latitude), 2) + Math.pow((p2.longitude - p1.longitude), 2));
+        double distancia = sqrt(Math.pow((p2.getLatitude() - p1.getLatitude()), 2) + Math.pow((p2.getLongitude() - p1.getLongitude()), 2));
         return distancia;
     }
-    
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
 }

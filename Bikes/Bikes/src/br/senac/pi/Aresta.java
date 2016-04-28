@@ -21,16 +21,23 @@ public class Aresta {
         return Coordenada.distanciaEntre(origem, destino);
     }
     
-    public Coordenada pontoMedio(double Xa, double Ya, double Xb, double Yb){ 
+    public Coordenada pontoMedio(){
+        
+       double Xa = this.origem.getLatitude();
+       double Ya = this.origem.getLongitude();
+       double Xb = this.origem.getLatitude();
+       double Yb = this.origem.getLongitude();
+        
        double Xm, Ym;
        Xm = (Xa + Xb)/2;
        Ym = (Ya + Yb)/2;
        return new Coordenada(Xm, Ym);
+    
     }
     
     public boolean estaPertoDaCoordanada(Coordenada c){
         // dando erro pois não esta reconhecendo o metodo ponto medio, acredito que depois de implementado não aconteça mais o erro. repare que eu calculo em origem e destino nesta ordem
-        double d1 = Coordenada.distanciaEntre(this.origem, Aresta.pontoMedio(this.origem, this.destino));
+        double d1 = Coordenada.distanciaEntre(this.origem, this.pontoMedio());
         double d2 = Coordenada.distanciaEntre(this.origem, c);//aqui fiquei em duvida se a distancia é em relação a origem
         return d2 <= d1;//não sei se isso funciona, mas acho q funciona sim
         /*
