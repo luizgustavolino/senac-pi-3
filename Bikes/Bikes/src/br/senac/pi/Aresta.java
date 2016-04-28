@@ -21,10 +21,11 @@ public class Aresta {
         return Coordenada.distanciaEntre(origem, destino);
     }
     
-    public Coordenada pontoMedio(){
-        // implementar: ponto medio de segmento
-        // a ------- ponto medio ------- b
-        return new Coordenada(0.0, 0.0);
+    public Coordenada pontoMedio(double Xa, double Ya, double Xb, double Yb){ 
+       double Xm, Ym;
+       Xm = (Xa + Xb)/2;
+       Ym = (Ya + Yb)/2;
+       return new Coordenada(Xm, Ym);
     }
     
     public boolean estaPertoDaCoordanada(Coordenada c){
