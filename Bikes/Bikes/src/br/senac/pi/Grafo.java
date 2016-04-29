@@ -5,6 +5,10 @@ import java.util.ArrayList;
 public class Grafo {
     
     private ArrayList<Aresta> arestas;
+
+    public Grafo(ArrayList<Aresta> arestas) {
+        this.arestas = arestas; 
+    }
     
     public void inserirCoordenadaNaMalha(Coordenada c) {
         // - Percorrer meu vetor de arestas
@@ -16,7 +20,9 @@ public class Grafo {
     }
     
     public ArrayList<Aresta> melhorRotaEntre(Coordenada saida, Coordenada chegada) {
-        // implementar roteirização
+        
+        
+        // implementar roteirização A*
         return new ArrayList<>();
     }
     
