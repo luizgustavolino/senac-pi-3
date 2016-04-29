@@ -1,98 +1,32 @@
-<!doctype html>  
-<html lang="en">  
+<!DOCTYPE html>
+<html>
   <head>
-  <style>
-    html,body {
-      height: 99%;
-      width: 99%;
-      background-color: #000000;
-    }
-    #map {
-      width: 100%;
-      height: 100%;
-      border: 1px solid black;
-    }   
-  </style>
-  <script language="javascript" src="http://openlayers.org/api/OpenLayers.js"></script>   
-  <script language="javascript" type="text/javascript">
-    function doload() {
-      var map = new OpenLayers.Map("map",{projection:"EPSG:3857"});
-      var toMercator = OpenLayers.Projection.transforms['EPSG:4326']['EPSG:3857'];
-      var center = toMercator({x:-0.05,y:51.5});
-      var osm = new OpenLayers.Layer.OSM();
-      map.addLayer(osm);
-
-      map.zoomToMaxExtent();  
-    }  
-    function addPoints(lon,lat,merkm){
-      var features = [];
-
-      for(var i = 0; i < lon.length; i++) {
-          var center = toMercator({x:lon[i],y:lat[i]});
-          features[i] = new OpenLayers.Feature.Vector(
-                  toMercator(new OpenLayers.Geometry.Point(
-                      lon[i],
-                      lat[i])), 
-                  {
-                      infoitems : merkm[i]
-                  }, {
-                      fillColor : '#008040',
-                      fillOpacity : 0.8,                    
-                      strokeColor : "#ee9900",
-                      strokeOpacity : 1,
-                      strokeWidth : 1,
-                      pointRadius : 8
-                  });
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
       }
-
-      // create the layer with listeners to create and destroy popups
-      var vector = new OpenLayers.Layer.Vector("Points",{
-          eventListeners:{
-              'featureselected':function(evt){
-                  var feature = evt.feature;
-                  var popup = new OpenLayers.Popup.FramedCloud("popup",
-                      OpenLayers.LonLat.fromString(feature.geometry.toShortString()),
-                      null,
-                      "<div style='font-size:.8em'>"+feature.attributes.infoitems+"</div>",
-                      null,
-                      true
-                  );
-                  feature.popup = popup;
-                  map.addPopup(popup);
-              },
-              'featureunselected':function(evt){
-                  var feature = evt.feature;
-                  map.removePopup(feature.popup);
-                  feature.popup.destroy();
-                  feature.popup = null;
-              }
-          }
-      });
-      vector.addFeatures(features);
-
-      var line = new OpenLayers.Control.DrawFeature(vector,
-              OpenLayers.Handler.Path);
-
-      // create the select feature control
-      var selector = new OpenLayers.Control.SelectFeature(vector,{
-          hover:true,
-          autoActivate:true
-      }); 
-     // map.destroy();
-     // map = new OpenLayers.Map("map",{projection:"EPSG:3857"});
-
-    //  var osm = new OpenLayers.Layer.OSM();
-      map.addLayer(vector);
-      map.addControl(selector);
-      map.addControl(line);
-      map.setCenter(new OpenLayers.LonLat(center.x,center.y), 13);
-    }
-    function pageOnLoad(){
-      alert();
-    }
-  </script>    
+      #map {
+        height: 100%;
+      }
+    </style>
   </head>
-  <body onload="doload()">
+  <body>
     <div id="map"></div>
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 8
+        });
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVBdqZrrlivwdMFGWhXd_fjJ-8XFlkAHU&callback=initMap"
+    async defer></script>
   </body>
 </html>

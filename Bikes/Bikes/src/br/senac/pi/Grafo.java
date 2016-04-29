@@ -15,4 +15,9 @@ public class Grafo {
         // - whooooa, parabens!
     }
     
+    public ArrayList<Aresta> melhorRotaEntre(Coordenada saida, Coordenada chegada) {
+        // implementar roteirização
+        return new ArrayList<>();
+    }
+    
 }
