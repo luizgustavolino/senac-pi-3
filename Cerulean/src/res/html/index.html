@@ -5,19 +5,44 @@
     <meta charset="utf-8">
     <script>
         
+        var java = {};
+        java.log = function(){ console.log; }
+        java.getJARPath = function(path) { return path; }
+        java.isNative = function() { return false; }
+        
         function onPageLoad(){
             
         }
         
-        function loadResources(){
-            var base = java.getJARPath();
-            java.log("jar:"+base+'!/res/html/interface.css');
+        function loadResource(path, type){
+            
             var head = document.head || document.getElementsByTagName('head')[0];
-            var style = document.createElement('link');
-            style.type = 'text/css';
-            style.rel = 'stylesheet';
-            style.href  = 'jar:'+base+'!/res/html/interface.css';
-            head.appendChild(style);
+            
+            switch(type){
+                case "css":
+                    var style = document.createElement('link');
+                    style.type = 'text/css';
+                    style.rel = 'stylesheet';
+                    style.href  = path + ".css";
+                    head.appendChild(style);
+                    java.log("loading ccs at " + style.href);
+                    break;
+                case "js":
+                    var script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.rel = 'javascript';
+                    script.src  = path + ".js";
+                    head.appendChild(script);
+                    java.log("loading js at " + path);
+                    break;
+            }
+        }
+        
+        function loadResources(){
+            loadResource(java.getJARPath("interface"), "css");
+            loadResource(java.getJARPath("handlebars"), "js");
+            loadResource(java.getJARPath("Cerulean"), "js");
+            loader.show("menu", "main-menu", {})
         }
         
     </script>
@@ -36,8 +61,5 @@
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVBdqZrrlivwdMFGWhXd_fjJ-8XFlkAHU&callback=initMap"
     async defer></script>
-    <script>
-      loader.show("menu", "main-menu", {})
-    </script>
   </body>
 </html>
