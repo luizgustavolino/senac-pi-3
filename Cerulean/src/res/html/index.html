@@ -1,32 +1,43 @@
-<!DOCTYPE html>
 <html>
   <head>
     <title>Simple Map</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
-    <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      #map {
-        height: 100%;
-      }
-    </style>
+    <script>
+        
+        function onPageLoad(){
+            
+        }
+        
+        function loadResources(){
+            var base = java.getJARPath();
+            java.log("jar:"+base+'!/res/html/interface.css');
+            var head = document.head || document.getElementsByTagName('head')[0];
+            var style = document.createElement('link');
+            style.type = 'text/css';
+            style.rel = 'stylesheet';
+            style.href  = 'jar:'+base+'!/res/html/interface.css';
+            head.appendChild(style);
+        }
+        
+    </script>
   </head>
-  <body>
+  <body onload="onPageLoad()">
     <div id="map"></div>
+    <div id ="menu"></div>
     <script>
       var map;
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: -34.397, lng: 150.644},
+          center: {lat: -23.397, lng: -46.644},
           zoom: 8
         });
       }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVBdqZrrlivwdMFGWhXd_fjJ-8XFlkAHU&callback=initMap"
     async defer></script>
+    <script>
+      loader.show("menu", "main-menu", {})
+    </script>
   </body>
 </html>
