@@ -11,38 +11,44 @@
         java.isNative = function() { return false; }
         
         function onPageLoad(){
-            
+            if(!java.isNative()){
+                loadAllResources()
+            }
         }
         
-        function loadResource(path, type){
+        function loadResource(path, type, callback){
             
             var head = document.head || document.getElementsByTagName('head')[0];
             
             switch(type){
                 case "css":
-                    var style = document.createElement('link');
-                    style.type = 'text/css';
-                    style.rel = 'stylesheet';
-                    style.href  = path + ".css";
+                    var style       = document.createElement('link');
+                    style.type      = 'text/css';
+                    style.rel       = 'stylesheet';
+                    style.href      = path + ".css";
+                    style.onload    = callback;
                     head.appendChild(style);
                     java.log("loading ccs at " + style.href);
                     break;
                 case "js":
-                    var script = document.createElement('script');
-                    script.type = 'text/javascript';
-                    script.rel = 'javascript';
-                    script.src  = path + ".js";
+                    var script      = document.createElement('script');
+                    script.type     = 'text/javascript';
+                    script.rel      = 'javascript';
+                    script.src      = path + ".js";
+                    script.onload   = callback; 
                     head.appendChild(script);
                     java.log("loading js at " + path);
                     break;
             }
         }
         
-        function loadResources(){
-            loadResource(java.getJARPath("interface"), "css");
-            loadResource(java.getJARPath("handlebars"), "js");
-            loadResource(java.getJARPath("Cerulean"), "js");
-            loader.show("menu", "main-menu", {})
+        function loadAllResources(){
+            loadResource(java.getJARPath("interface"), "css", function(){
+            loadResource(java.getJARPath("MapStyle"), "js", function(){
+            loadResource(java.getJARPath("handlebars"), "js", function(){
+            loadResource(java.getJARPath("Cerulean"), "js", function(){
+                cerulean.tpl.show("menu", "main-menu", {});
+            });});});});
         }
         
     </script>
@@ -50,16 +56,7 @@
   <body onload="onPageLoad()">
     <div id="map"></div>
     <div id ="menu"></div>
-    <script>
-      var map;
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: -23.397, lng: -46.644},
-          zoom: 8
-        });
-      }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVBdqZrrlivwdMFGWhXd_fjJ-8XFlkAHU&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVBdqZrrlivwdMFGWhXd_fjJ-8XFlkAHU"
     async defer></script>
   </body>
 </html>

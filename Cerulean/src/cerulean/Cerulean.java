@@ -38,7 +38,7 @@ public class Cerulean extends Application {
             // May 4, 2016
             JSObject jsobj = (JSObject) engine.executeScript("window");
             jsobj.setMember("java", new ScriptingBridge());
-            engine.executeScript("loadResources()");
+            engine.executeScript("loadAllResources()");
         }
     });
     
