@@ -2,7 +2,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #dedede;
+  background-color: #000;
 }
 
 #map {
@@ -13,9 +13,46 @@ html, body {
   height: calc(100% - 4px);
 }
 
+#menu-content{
+  width: 10000px;
+}
+
 #menu {
   float: right;
   top: 2px;
   width: 316px;
   height: calc(100% - 4px);
+  overflow: hidden;
+}
+
+#menu .nav {
+  float:left;
+  padding: 5px;
+  width: 302px;
+  border: 1px solid white;
+  height: calc(100% - 65px);
+  
+}
+
+.viewing {
+  margin-left: 0px;
+  transition: margin-left .32s ease-in-out;
+}
+
+.pushed {
+  margin-left: -314px;
+  transition: margin-left .32s ease-in-out;
+}
+
+.hidden {
+  display: none;
+}
+
+.overlay {
+    background-color: rgba(1, 1, 1, 0.01);
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
 }

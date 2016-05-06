@@ -47,15 +47,17 @@
             loadResource(java.getJARPath("MapStyle"), "js", function(){
             loadResource(java.getJARPath("handlebars"), "js", function(){
             loadResource(java.getJARPath("Cerulean"), "js", function(){
-                cerulean.tpl.show("menu", "main-menu", {});
+                cerulean.nav.setRootController("main-menu", {})
             });});});});
         }
         
     </script>
   </head>
-  <body onload="onPageLoad()">
+  <body id="body" onload="onPageLoad()">
     <div id="map"></div>
-    <div id ="menu"></div>
+    <div id ="menu">
+      <div id="menu-content"/>
+    </div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVBdqZrrlivwdMFGWhXd_fjJ-8XFlkAHU"
     async defer></script>
   </body>

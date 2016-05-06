@@ -41,7 +41,7 @@ var mapStyle = [
         elementType: 'labels',
         stylers: [
             {
-                visibility: 'simplified'
+                visibility: 'off'
             },
             {
                 color: "#000000"
