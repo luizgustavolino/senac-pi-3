@@ -3,6 +3,7 @@
     <title>Simple Map</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
     <script>
         
         var java = {};
@@ -43,12 +44,20 @@
         }
         
         function loadAllResources(){
-            loadResource(java.getJARPath("interface"), "css", function(){
+            loadResource(java.getJARPath("css/reset"), "css", function(){
+            loadResource(java.getJARPath("css/interface"), "css", function(){
             loadResource(java.getJARPath("MapStyle"), "js", function(){
             loadResource(java.getJARPath("handlebars"), "js", function(){
+            loadResource(java.getJARPath("HandleBarsHelpers"), "js", function(){
             loadResource(java.getJARPath("Cerulean"), "js", function(){
-                cerulean.nav.setRootController("main-menu", {})
-            });});});});
+                cerulean.nav.setRootController("main-menu",
+                  { options: [
+                      { name:"Malha", next:"malha" },
+                      { name:"Centrais", next:"centrais" },
+                      { name:"Rotas", next:"rotas" }
+                  ]}
+                )
+            });});});});});});
         }
         
     </script>
@@ -56,7 +65,8 @@
   <body id="body" onload="onPageLoad()">
     <div id="map"></div>
     <div id ="menu">
-      <div id="menu-content"/>
+      <button id="back-button" class="back hidden transparent" onclick="cerulean.nav.popController()"></button>
+      <div id="menu-content"></div>
     </div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVBdqZrrlivwdMFGWhXd_fjJ-8XFlkAHU"
     async defer></script>

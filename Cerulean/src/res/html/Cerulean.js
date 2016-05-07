@@ -37,8 +37,11 @@ cerulean.nav.pushController = function( templateName, data) {
 	cerulean.dom.addClass(prevController, "pushed");
 	cerulean.nav.stack.push(controller);
 
+	var backBtn = document.getElementById("back-button");
+	cerulean.dom.removeClass(backBtn, "hidden")
+	
 	setTimeout(function(){
-		cerulean.dom.addClass(prevController, "hidden")
+		cerulean.dom.removeClass(backBtn, "transparent")
 		cerulean.nav.setUserInteractionEnabled(true)
 	}, 360);
 }
@@ -49,14 +52,23 @@ cerulean.nav.popController = function() {
 	var poppedController = cerulean.nav.stack.pop()
 	var newTopController = cerulean.nav.stack.last()
 
-	cerulean.dom.removeClass(newTopController, "hidden");
 	cerulean.dom.removeClass(newTopController, "pushed");
-	cerulean.dom.removeClass(newTopController, "viewing");
+	cerulean.dom.addClass(newTopController, "viewing");
+
+	if(cerulean.nav.stack[0] == newTopController){
+		var backBtn = document.getElementById("back-button")
+		cerulean.dom.addClass(backBtn, "transparent");
+	}
 	
 	setTimeout(function(){
-		//poppedController.remove()
+		poppedController.remove()
 		cerulean.nav.setUserInteractionEnabled(true)
 	}, 360);
+}
+
+cerulean.nav.setTitle = function(newTitle) {
+	var tag = document.getElementById("title");
+	tag.innerHTML = newTitle
 }
 
 cerulean.nav.setUserInteractionEnabled = function(enabled){
@@ -75,11 +87,10 @@ cerulean.nav.setUserInteractionEnabled = function(enabled){
 
 cerulean.map = {}
 
-cerulean.map.style = mapStyle;
 cerulean.map.view = new google.maps.Map(document.getElementById('map'), {
     zoom: 17,
     center: {lat: -23.5607558, lng: -46.6597692},
-    styles: cerulean.map.style,
+    styles: mapStyleRoad,
     fullscreenControl: false,
     mapTypeControl: false,
     streetViewControl: false,

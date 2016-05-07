@@ -1,2 +1,15 @@
-<p>menu principal placeholder</p>
-<button onclick="cerulean.nav.pushController('settings', {})">push</button>
+<h1 id="title">Cerulean</h1>
+<ul>
+	{{#each options}}
+	<li>
+		<button onclick="cerulean.nav.pushController('{{next}}', {})">
+			{{name}}<span class="chevron"/>
+		</button>
+	</li>
+	{{/each}}
+</ul>
+<!--
+	creditos
+	icones https://www.iconfinder.com/Designerzbase
+	handlebars http://handlebarsjs.com
+-->
