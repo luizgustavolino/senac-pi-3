@@ -8,6 +8,8 @@ var cerulean = {}
 cerulean.nav = {}
 cerulean.nav.stack = []
 cerulean.nav.counter = 1
+cerulean.nav.onPush  = {}
+cerulean.nav.onPop  = {}
 
 cerulean.nav.setRootController = function(templateName, data){
 	var controller = cerulean.nav.makeControllerForTemplate(templateName, data)
@@ -18,6 +20,7 @@ cerulean.nav.makeControllerForTemplate = function(templateName, data){
 
 	var newController = document.createElement('div');
 	newController.className = "nav viewing"
+	newController.templateName = templateName
 	newController.id = "nav"+(cerulean.nav.counter++)
 
 	var tag = document.getElementById("menu-content");
@@ -36,6 +39,10 @@ cerulean.nav.pushController = function( templateName, data) {
 	cerulean.dom.removeClass(prevController, "viewing");
 	cerulean.dom.addClass(prevController, "pushed");
 	cerulean.nav.stack.push(controller);
+
+	if(cerulean.nav.onPush[templateName]){
+		cerulean.nav.onPush[templateName]()
+	}
 
 	var backBtn = document.getElementById("back-button");
 	cerulean.dom.removeClass(backBtn, "hidden")
@@ -58,6 +65,10 @@ cerulean.nav.popController = function() {
 	if(cerulean.nav.stack[0] == newTopController){
 		var backBtn = document.getElementById("back-button")
 		cerulean.dom.addClass(backBtn, "transparent");
+	}
+
+	if(cerulean.nav.onPop[poppedController.templateName]){
+		cerulean.nav.onPop[poppedController.templateName]()
 	}
 	
 	setTimeout(function(){
@@ -174,3 +185,14 @@ if (!Array.prototype.last){
 };
 
 java.log("Cerulean JS loaded");
+
+
+// --[ PUSH/POP ACTIONS ] ---
+
+cerulean.nav.onPush["malha"] = function (){
+	cerulean.map.view.set('styles', mapStyleMesh)
+}
+
+cerulean.nav.onPop["malha"] = function (){
+	cerulean.map.view.set('styles', mapStyleRoad)
+}

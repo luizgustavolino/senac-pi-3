@@ -1,4 +1,4 @@
-var mapStyleMesh = new google.maps.StyledMapType([
+var mapStyleMesh = [
     {
         stylers: [
             { hue: '#00C0DE' },
@@ -42,12 +42,26 @@ var mapStyleMesh = new google.maps.StyledMapType([
             { color: '#00C0DE'}
         ]
     }
-],{name: 'MeshStyle' });
+];
 
-var mapStyleRoad = new google.maps.StyledMapType([
+var mapStyleRoad = [
     {
+        featureType: "all",
         stylers: [
-            { visibility: 'simplified' }
+            { saturation: -80 }
         ]
-    }
-],{name: 'RoadStyle' });
+    },{
+        featureType: "road.arterial",
+        elementType: "geometry",
+        stylers: [
+            { hue: "#00ffee" },
+            { saturation: 50 }
+        ]
+    },{
+        featureType: "poi.business",
+        elementType: "labels",
+        stylers: [
+            { visibility: "off" }
+        ]
+     }
+]
