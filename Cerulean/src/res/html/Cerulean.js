@@ -112,7 +112,35 @@ cerulean.map.view = new google.maps.Map(document.getElementById('map'), {
     }
 });
 
-// ---[ DOM             ]---
+cerulean.map.coordinates = []
+cerulean.map.addCoordinate = function(_lat, _lng) {
+	var point = new google.maps.Circle({
+      fillColor: '#FFB831',
+      fillOpacity: 1.0,
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.0,
+      strokeWeight: 0,
+      map: cerulean.map.view,
+      center: {lat: _lat, lng: _lng},
+      radius: 5
+    });
+
+    cerulean.map.coordinates.push(point)
+}
+
+cerulean.map.hideAllCoordinates = function(){
+	cerulean.map.coordinates.forEach(
+		function(elm){ elm.setMap(null) }
+	)
+}
+
+cerulean.map.showAllCoordinates = function(){
+	cerulean.map.coordinates.forEach(
+		function(elm){ elm.setMap(cerulean.map.view)}
+	)
+}
+
+// ---[ DOM ]---
 
 cerulean.dom = {}
 cerulean.dom.addClass = function(tag, className){
@@ -184,15 +212,19 @@ if (!Array.prototype.last){
     };
 };
 
-java.log("Cerulean JS loaded");
-
-
 // --[ PUSH/POP ACTIONS ] ---
 
 cerulean.nav.onPush["malha"] = function (){
 	cerulean.map.view.set('styles', mapStyleMesh)
+	cerulean.map.showAllCoordinates()
+	cerulean.map.view.addListener('click', function(e) {
+    	cerulean.map.addCoordinate(e.latLng.lat(), e.latLng.lng());
+ 	});
 }
 
 cerulean.nav.onPop["malha"] = function (){
 	cerulean.map.view.set('styles', mapStyleRoad)
+	cerulean.map.hideAllCoordinates()
 }
+
+java.log("Cerulean JS loaded");

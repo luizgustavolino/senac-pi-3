@@ -10,7 +10,7 @@ var mapStyleMesh = [
         featureType: 'road',
         elementType: 'all',
         stylers: [
-            { color: "#dedeff" },
+            { color: "#000000" },
             { visibility: 'on' }
         ]
     },{
