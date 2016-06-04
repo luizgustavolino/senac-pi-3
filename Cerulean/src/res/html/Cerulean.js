@@ -108,6 +108,8 @@ cerulean.map.view = new google.maps.Map(document.getElementById('map'), {
     fullscreenControl: false,
     mapTypeControl: false,
     streetViewControl: false,
+    minZoom: 16,
+    maxZoom: 18,
     scrollwheel: false,
     noClear: true,
     zoomControlOptions: {
@@ -115,23 +117,26 @@ cerulean.map.view = new google.maps.Map(document.getElementById('map'), {
     }
 });
 
-cerulean.map.coordinates = []
-cerulean.map.addCoordinate = function(_lat, _lng) {
+// ---[ VÉRTICES  ]---
+
+cerulean.coordinates = {}
+cerulean.coordinates.list = []
+cerulean.coordinates.add = function(_lat, _lng) {
 
 	var point = new google.maps.Marker(mapStyles.Vertice(_lat, _lng));
-	point.addListener('click', cerulean.map.coordinateClickAndDelete(point));
-	point.cerulean = {arestas:[]}
+	point.addListener('click', cerulean.coordinates.clickAndDelegateAction(point));
+	point.cerulean = {edgesIn:[], edgesOut:[]}
 
-	cerulean.map.coordinates.push(point)
-    cerulean.map.updateCoordinatesCount()
+	cerulean.coordinates.list.push(point)
+    cerulean.coordinates.updateCount()
 }
 
-cerulean.map.updateCoordinatesCount = function(){
+cerulean.coordinates.updateCount = function(){
 	
 	var disconectedCount = 0
-	var allCoordinates = cerulean.map.coordinates.length
+	var allCoordinates = cerulean.coordinates.list.length
 	for (var i = 0; i < allCoordinates; i++) {
-		var n = cerulean.map.coordinates[i]
+		var n = cerulean.coordinates.list[i]
 		if(n.cerulean && n.cerulean.arestas && n.cerulean.arestas.length == 0){
 			disconectedCount++;
 		}
@@ -141,27 +146,109 @@ cerulean.map.updateCoordinatesCount = function(){
 	cerulean.dom.byID("vertices.isolados", disconectedCount)	
 }
 
-cerulean.map.coordinateClickAndDelete = function(point){
+cerulean.coordinates.clickAndDelegateAction = function(point){
 	return function(){
 
 		google.maps.event.clearInstanceListeners(point)
 		point.set('draggable', false)
 		point.setMap(null)
 
-		var index = cerulean.map.coordinates.indexOf(point)
-		cerulean.map.coordinates.splice(index,1)
-		cerulean.map.updateCoordinatesCount()
+		var index = cerulean.coordinates.list.indexOf(point)
+		cerulean.coordinates.list.splice(index,1)
+		cerulean.coordinates.updateCount()
 	}
 }
 
-cerulean.map.hideAllCoordinates = function(){
-	cerulean.map.coordinates.forEach(
+cerulean.coordinates.clickAndMakeEdgeAction = function(point){
+	return function(){
+		if(cerulean.edges.startCoordnate == null){
+			cerulean.edges.startCoordnate = point
+			point.set("icon", mapStyles.startVerticeIcon);
+		}else{
+			if(cerulean.edges.startCoordnate != point){
+				cerulean.edges.make(cerulean.edges.startCoordnate, point)
+			}
+			cerulean.edges.startCoordnate.set("icon", mapStyles.standingVerticeIcon);
+			cerulean.edges.startCoordnate = null
+		}
+	}
+}
+
+cerulean.edges = {}
+cerulean.edges.list = []
+cerulean.edges.startCoordnate = null
+cerulean.edges.make = function(from, to){
+
+	// Função auxiliar para procurar
+	// se a ligação já existe
+	var checkDontHave = function(b) {
+		return function(a){
+			if(a.cerulean.reversable){
+				var first 	= a.cerulean.first
+				var second 	= a.cerulean.second
+				return (first != a && second != b) && (first != b && second != a)
+			}else return (a.cerulean.to != b);
+		}
+	}
+
+	// primeiro verifica se essa ligação
+	// já não existe na ida ou volta
+	if(!from.cerulean.edgesOut.every(checkDontHave(to))){
+		sys.log("Essa ligação já existe!");
+		return;
+	}
+
+	if(!to.cerulean.edgesOut.every(checkDontHave(from))){
+		to.cerulean.edgesOut.every(function(edge){
+			if(edge.cerulean.to == from){
+
+				edge.cerulean.reversable = true
+				edge.cerulean.from 		= null
+				edge.cerulean.to 		= null
+				edge.cerulean.first 	= from
+				edge.cerulean.second 	= to
+				edge.setOptions(mapStyles.ReversableEdge)
+
+				from.cerulean.edgesOut.push(edge)
+				from.cerulean.edgesIn.push(edge)
+
+				return false
+			} else return true
+		})
+		return;
+	}else{
+
+		var edge = new google.maps.Polyline({
+			path: [from.getPosition(), to.getPosition()],
+        	map: cerulean.map.view
+		});
+
+		edge.setOptions(mapStyles.Edge)
+		
+		edge.addListener('click', function(){
+			google.maps.event.clearInstanceListeners(edge)
+			edge.setMap(null)
+		});
+
+		edge.cerulean = {}
+		edge.cerulean.reversable = false
+		edge.cerulean.from = from 
+		edge.cerulean.to = to
+		
+		from.cerulean.edgesOut.push(edge)
+		to.cerulean.edgesIn.push(edge)
+	}
+	
+}
+
+cerulean.coordinates.hideAll = function(){
+	cerulean.coordinates.list.forEach(
 		function(elm){ elm.setMap(null) }
 	)
 }
 
-cerulean.map.showAllCoordinates = function(){
-	cerulean.map.coordinates.forEach(
+cerulean.coordinates.showAll = function(){
+	cerulean.coordinates.list.forEach(
 		function(elm){ elm.setMap(cerulean.map.view)}
 	)
 }
@@ -252,41 +339,53 @@ if (!Array.prototype.last){
 
 cerulean.nav.onPush["malha"] = function (){
 	cerulean.map.view.set('styles', mapStyles.Mesh)
-	cerulean.map.showAllCoordinates()
+	cerulean.coordinates.showAll()
 }
 
 cerulean.nav.onPop["malha"] = function (){
 	cerulean.map.view.set('styles', mapStyles.Road)
-	cerulean.map.hideAllCoordinates()
+	cerulean.coordinates.hideAll()
 }
 
 cerulean.nav.onPush["vertices"] = function (){
 	
 	cerulean.map.view.addListener('click', function(e) {
-    	cerulean.map.addCoordinate(e.latLng.lat(), e.latLng.lng());
+    	cerulean.coordinates.add(e.latLng.lat(), e.latLng.lng());
  	});
 
  	cerulean.map.view.set('cursor', 'crosshair')
- 	cerulean.map.updateCoordinatesCount()
+ 	cerulean.coordinates.updateCount()
 
- 	var allCoordinates = cerulean.map.coordinates.length
+ 	var allCoordinates = cerulean.coordinates.list.length
 	for (var i = 0; i < allCoordinates; i++) {
-		var n = cerulean.map.coordinates[i]
+		var n = cerulean.coordinates.list[i]
 		n.set('clickable', true); n.set('draggable', true)
-		n.addListener('click', cerulean.map.coordinateClickAndDelete(n));
+		n.addListener('click', cerulean.coordinates.clickAndDelegateAction(n));
 	};
 }
 
 cerulean.nav.onPop["vertices"] = function (){
 	google.maps.event.clearInstanceListeners(cerulean.map.view)
 
-	var allCoordinates = cerulean.map.coordinates.length
+	var allCoordinates = cerulean.coordinates.list.length
 	for (var i = 0; i < allCoordinates; i++) {
-		var n = cerulean.map.coordinates[i]
-		n.set('clickable', false); n.set('draggable', false)
+		var n = cerulean.coordinates.list[i]
+		n.set('clickable', false);
+		n.set('draggable', false)
 		google.maps.event.clearInstanceListeners(n)
 	};
 
+}
+
+cerulean.nav.onPush["arestas"] = function (){
+	
+ 	var allCoordinates = cerulean.coordinates.list.length
+	for (var i = 0; i < allCoordinates; i++) {
+		var n = cerulean.coordinates.list[i]
+		n.set('clickable', true);
+		n.set('draggable', false)
+		n.addListener('click', cerulean.coordinates.clickAndMakeEdgeAction(n));
+	};
 }
 
 // --- [ EOF ] ---

@@ -150,6 +150,7 @@ html, body {
 .help {
   padding: 4px;
   border-top: 1px solid #999;
+  line-height: normal;
   margin-top: 20px 4px 4px 4px;
 }
 
