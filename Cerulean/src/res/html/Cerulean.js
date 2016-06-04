@@ -23,7 +23,7 @@ cerulean.nav.makeControllerForTemplate = function(templateName, data){
 	newController.templateName = templateName
 	newController.id = "nav"+(cerulean.nav.counter++)
 
-	var tag = document.getElementById("menu-content");
+	var tag = cerulean.dom.byID("menu-content");
 	tag.appendChild(newController);
 	cerulean.tpl.show(newController.id, templateName, data)
 	return newController
@@ -40,16 +40,18 @@ cerulean.nav.pushController = function( templateName, data) {
 	cerulean.dom.addClass(prevController, "pushed");
 	cerulean.nav.stack.push(controller);
 
-	if(cerulean.nav.onPush[templateName]){
-		cerulean.nav.onPush[templateName]()
-	}
-
-	var backBtn = document.getElementById("back-button");
+	var backBtn = cerulean.dom.byID("back-button");
 	cerulean.dom.removeClass(backBtn, "hidden")
 	
 	setTimeout(function(){
+
+		if(cerulean.nav.onPush[templateName]){
+			cerulean.nav.onPush[templateName]()
+		}
+
 		cerulean.dom.removeClass(backBtn, "transparent")
 		cerulean.nav.setUserInteractionEnabled(true)
+
 	}, 360);
 }
 
@@ -63,22 +65,23 @@ cerulean.nav.popController = function() {
 	cerulean.dom.addClass(newTopController, "viewing");
 
 	if(cerulean.nav.stack[0] == newTopController){
-		var backBtn = document.getElementById("back-button")
+		var backBtn = cerulean.dom.byID("back-button")
 		cerulean.dom.addClass(backBtn, "transparent");
-	}
-
-	if(cerulean.nav.onPop[poppedController.templateName]){
-		cerulean.nav.onPop[poppedController.templateName]()
 	}
 	
 	setTimeout(function(){
+
+		if(cerulean.nav.onPop[poppedController.templateName]){
+			cerulean.nav.onPop[poppedController.templateName]()
+		}
+
 		poppedController.remove()
 		cerulean.nav.setUserInteractionEnabled(true)
 	}, 360);
 }
 
 cerulean.nav.setTitle = function(newTitle) {
-	var tag = document.getElementById("title");
+	var tag = cerulean.dom.byID("title");
 	tag.innerHTML = newTitle
 }
 
@@ -86,7 +89,7 @@ cerulean.nav.setUserInteractionEnabled = function(enabled){
 	if(!enabled && !cerulean.nav.overlay){
 		cerulean.nav.overlay = document.createElement('div');		
 		cerulean.dom.addClass(cerulean.nav.overlay, "overlay");
-		var tag = document.getElementById("body");
+		var tag = cerulean.dom.byID("body");
 		tag.appendChild(cerulean.nav.overlay);
 	}else if(enabled && cerulean.nav.overlay){
 		cerulean.nav.overlay.remove()
@@ -101,7 +104,7 @@ cerulean.map = {}
 cerulean.map.view = new google.maps.Map(document.getElementById('map'), {
     zoom: 17,
     center: {lat: -23.5607558, lng: -46.6597692},
-    styles: mapStyleRoad,
+    styles: mapStyles.Road,
     fullscreenControl: false,
     mapTypeControl: false,
     streetViewControl: false,
@@ -114,18 +117,41 @@ cerulean.map.view = new google.maps.Map(document.getElementById('map'), {
 
 cerulean.map.coordinates = []
 cerulean.map.addCoordinate = function(_lat, _lng) {
-	var point = new google.maps.Circle({
-      fillColor: '#FFB831',
-      fillOpacity: 1.0,
-      strokeColor: '#FF0000',
-      strokeOpacity: 0.0,
-      strokeWeight: 0,
-      map: cerulean.map.view,
-      center: {lat: _lat, lng: _lng},
-      radius: 5
-    });
 
-    cerulean.map.coordinates.push(point)
+	var point = new google.maps.Marker(mapStyles.Vertice(_lat, _lng));
+	point.addListener('click', cerulean.map.coordinateClickAndDelete(point));
+	point.cerulean = {arestas:[]}
+
+	cerulean.map.coordinates.push(point)
+    cerulean.map.updateCoordinatesCount()
+}
+
+cerulean.map.updateCoordinatesCount = function(){
+	
+	var disconectedCount = 0
+	var allCoordinates = cerulean.map.coordinates.length
+	for (var i = 0; i < allCoordinates; i++) {
+		var n = cerulean.map.coordinates[i]
+		if(n.cerulean && n.cerulean.arestas && n.cerulean.arestas.length == 0){
+			disconectedCount++;
+		}
+	};
+	
+	cerulean.dom.byID("vertices.cadastrados", allCoordinates)
+	cerulean.dom.byID("vertices.isolados", disconectedCount)	
+}
+
+cerulean.map.coordinateClickAndDelete = function(point){
+	return function(){
+
+		google.maps.event.clearInstanceListeners(point)
+		point.set('draggable', false)
+		point.setMap(null)
+
+		var index = cerulean.map.coordinates.indexOf(point)
+		cerulean.map.coordinates.splice(index,1)
+		cerulean.map.updateCoordinatesCount()
+	}
 }
 
 cerulean.map.hideAllCoordinates = function(){
@@ -149,6 +175,16 @@ cerulean.dom.addClass = function(tag, className){
 	}
 }
 
+cerulean.dom.byID = function(_id, _newInner){
+	if(_newInner){
+		var element = cerulean.dom.byID(_id);
+		if(element) element.innerHTML = _newInner
+		return element
+	}else{
+		return document.getElementById(_id);
+	}
+}
+
 cerulean.dom.removeClass = function(tag, className) {
 	if(tag.className.indexOf(className) != -1){
 		var regex = new RegExp('(?:^|\\s)'+className+'(?!\\S)',"g");
@@ -165,7 +201,7 @@ cerulean.tpl = {
 cerulean.tpl.show = function(tagID, templateName, data){
 
 	function display(){
-		var tag = document.getElementById(tagID);
+		var tag = cerulean.dom.byID(tagID);
 		tag.innerHTML = cerulean.tpl.precompiled_templates[templateName](data)
 	}
 
@@ -173,22 +209,22 @@ cerulean.tpl.show = function(tagID, templateName, data){
             display();
 	}else{
 		
-            var r = new XMLHttpRequest();
-            var base = java.getJARPath("templates/");
-            var loc = base + templateName+".template.html";
-            java.log("loading html template: " + loc);
+        var r = new XMLHttpRequest();
+        var base = sys.getPath("templates/");
+        var loc = base + templateName+".template.html";
+        sys.log("loading html template: " + loc);
+        
+        r.open("GET", loc, true);
+        r.onreadystatechange = function () {
             
-            r.open("GET", loc, true);
-            r.onreadystatechange = function () {
-                
-                if (r.readyState != 4 || r.status != 200){
-                    java.log("Error loading template "+templateName+" (code "+r.status+")")
-                }
-                
-                cerulean.tpl.precompiled_templates[templateName] = Handlebars.compile(r.responseText);
-                display();
-            };
-            r.send();
+            if (r.readyState != 4 || r.status != 200){
+                sys.log("Error loading template "+templateName+" (code "+r.status+")")
+            }
+            
+            cerulean.tpl.precompiled_templates[templateName] = Handlebars.compile(r.responseText);
+            display();
+        };
+        r.send();
 	}
 };
 
@@ -215,25 +251,43 @@ if (!Array.prototype.last){
 // --[ PUSH/POP ACTIONS ] ---
 
 cerulean.nav.onPush["malha"] = function (){
-	cerulean.map.view.set('styles', mapStyleMesh)
+	cerulean.map.view.set('styles', mapStyles.Mesh)
 	cerulean.map.showAllCoordinates()
 }
 
 cerulean.nav.onPop["malha"] = function (){
-	cerulean.map.view.set('styles', mapStyleRoad)
+	cerulean.map.view.set('styles', mapStyles.Road)
 	cerulean.map.hideAllCoordinates()
 }
 
 cerulean.nav.onPush["vertices"] = function (){
-	cerulean.map.view.set('cursor', 'crosshair')
+	
 	cerulean.map.view.addListener('click', function(e) {
     	cerulean.map.addCoordinate(e.latLng.lat(), e.latLng.lng());
  	});
+
+ 	cerulean.map.view.set('cursor', 'crosshair')
+ 	cerulean.map.updateCoordinatesCount()
+
+ 	var allCoordinates = cerulean.map.coordinates.length
+	for (var i = 0; i < allCoordinates; i++) {
+		var n = cerulean.map.coordinates[i]
+		n.set('clickable', true); n.set('draggable', true)
+		n.addListener('click', cerulean.map.coordinateClickAndDelete(n));
+	};
 }
 
 cerulean.nav.onPop["vertices"] = function (){
 	google.maps.event.clearInstanceListeners(cerulean.map.view)
+
+	var allCoordinates = cerulean.map.coordinates.length
+	for (var i = 0; i < allCoordinates; i++) {
+		var n = cerulean.map.coordinates[i]
+		n.set('clickable', false); n.set('draggable', false)
+		google.maps.event.clearInstanceListeners(n)
+	};
+
 }
 
 // --- [ EOF ] ---
-java.log("Cerulean JS loaded");
+sys.log("Cerulean JS loaded");

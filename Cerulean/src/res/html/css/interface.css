@@ -146,3 +146,19 @@ html, body {
     padding: 20px 0px 10px 0px;
     color: #ffffff;
 }
+
+.help {
+  padding: 4px;
+  border-top: 1px solid #999;
+  margin-top: 20px 4px 4px 4px;
+}
+
+.help p{
+  font-size: 16px;
+  color: #cccccc;
+}
+
+.scrollable{
+  overflow: scroll;
+  height: 100%;
+}

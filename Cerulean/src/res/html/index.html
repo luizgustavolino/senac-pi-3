@@ -1,18 +1,18 @@
 <html>
   <head>
-    <title>Simple Map</title>
+    <title>Cerulean delivery systems</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
     <script>
         
-        var java = {};
-        java.log = function(){ console.log; }
-        java.getJARPath = function(path) { return path; }
-        java.isNative = function() { return false; }
+        var sys         = {}; // PROXY Function
+        sys.log         = function(){ console.log; }
+        sys.getPath     = function(path) { return path; }
+        sys.isNative    = function() { return false; }
         
         function onPageLoad(){
-            if(!java.isNative()){
+            if(!sys.isNative()){
                 loadAllResources()
             }
         }
@@ -29,7 +29,7 @@
                     style.href      = path + ".css";
                     style.onload    = callback;
                     head.appendChild(style);
-                    java.log("loading ccs at " + style.href);
+                    sys.log("loading ccs at " + style.href);
                     break;
                 case "js":
                     var script      = document.createElement('script');
@@ -38,18 +38,18 @@
                     script.src      = path + ".js";
                     script.onload   = callback; 
                     head.appendChild(script);
-                    java.log("loading js at " + path);
+                    sys.log("loading js at " + path);
                     break;
             }
         }
         
         function loadAllResources(){
-            loadResource(java.getJARPath("css/reset"), "css", function(){
-            loadResource(java.getJARPath("css/interface"), "css", function(){
-            loadResource(java.getJARPath("MapStyle"), "js", function(){
-            loadResource(java.getJARPath("handlebars"), "js", function(){
-            loadResource(java.getJARPath("Cerulean"), "js", function(){
-            loadResource(java.getJARPath("HandleBarsHelpers"), "js", function(){
+            loadResource(sys.getPath("css/reset"), "css", function(){
+            loadResource(sys.getPath("css/interface"), "css", function(){
+            loadResource(sys.getPath("MapStyle"), "js", function(){
+            loadResource(sys.getPath("handlebars"), "js", function(){
+            loadResource(sys.getPath("Cerulean"), "js", function(){
+            loadResource(sys.getPath("HandleBarsHelpers"), "js", function(){
                 cerulean.nav.setRootController("main-menu", cerulean.nav.map)
             });});});});});});
         }

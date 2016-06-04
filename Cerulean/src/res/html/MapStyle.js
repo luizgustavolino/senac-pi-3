@@ -1,51 +1,27 @@
-var mapStyleMesh = [
+var mapStyles = {}
+
+mapStyles.Mesh = [
     {
-        stylers: [
-            { hue: '#00C0DE' },
-            { visibility: 'simplified' },
-            { gamma: 0.12 },
-            { weight: 0.8 },
-            { saturation: -120}
-        ]
+      stylers: [
+        { hue: '#003344' },
+        { saturation: 200 }
+      ]
     },{
-        featureType: 'road',
-        elementType: 'all',
-        stylers: [
-            { color: "#000000" },
-            { visibility: 'on' }
-        ]
+      featureType: 'road',
+      elementType: 'geometry',
+      stylers: [
+        { lightness: 100 },
+        { visibility: 'simplified' }
+      ]
     },{
         elementType: 'labels',
         stylers: [
             { visibility: 'off' }
         ]
-    },{
-        featureType: 'road',
-        elementType: 'labels',
-        stylers: [
-            { visibility: 'off' },
-            { color: "#000000" }
-        ]
-    },{
-        featureType: 'poi.park',
-        stylers: [
-            { color: "#93BF9E" }
-        ]
-    },{
-        featureType: "landscape.man_made",
-        elementType: "geometry",
-        stylers: [
-            { weight: 0.2 }
-        ]
-    },{
-        featureType: 'water',
-        stylers: [
-            { color: '#00C0DE'}
-        ]
     }
 ];
 
-var mapStyleRoad = [
+mapStyles.Road = [
     {
         featureType: "all",
         stylers: [
@@ -64,5 +40,23 @@ var mapStyleRoad = [
         stylers: [
             { visibility: "off" }
         ]
-     }
+    }
 ]
+
+
+mapStyles.Vertice = function(_lat, _lng){
+    return {
+        map: cerulean.map.view,
+        position: {lat: _lat, lng: _lng},
+        icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            fillColor: '#3939B2',
+            fillOpacity: 1.0,
+            strokeColor: '#FFFFFF',
+            strokeOpacity: 0.0,
+            strokeWeight: 0.0,
+            scale: 9
+        },
+        draggable: true,
+    }
+}
