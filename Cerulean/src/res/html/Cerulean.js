@@ -217,9 +217,6 @@ if (!Array.prototype.last){
 cerulean.nav.onPush["malha"] = function (){
 	cerulean.map.view.set('styles', mapStyleMesh)
 	cerulean.map.showAllCoordinates()
-	cerulean.map.view.addListener('click', function(e) {
-    	cerulean.map.addCoordinate(e.latLng.lat(), e.latLng.lng());
- 	});
 }
 
 cerulean.nav.onPop["malha"] = function (){
@@ -227,4 +224,16 @@ cerulean.nav.onPop["malha"] = function (){
 	cerulean.map.hideAllCoordinates()
 }
 
+cerulean.nav.onPush["vertices"] = function (){
+	cerulean.map.view.set('cursor', 'crosshair')
+	cerulean.map.view.addListener('click', function(e) {
+    	cerulean.map.addCoordinate(e.latLng.lat(), e.latLng.lng());
+ 	});
+}
+
+cerulean.nav.onPop["vertices"] = function (){
+	google.maps.event.clearInstanceListeners(cerulean.map.view)
+}
+
+// --- [ EOF ] ---
 java.log("Cerulean JS loaded");

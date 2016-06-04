@@ -4,7 +4,8 @@ var mapStyleMesh = [
             { hue: '#00C0DE' },
             { visibility: 'simplified' },
             { gamma: 0.12 },
-            { weight: 0.8 }
+            { weight: 0.8 },
+            { saturation: -120}
         ]
     },{
         featureType: 'road',

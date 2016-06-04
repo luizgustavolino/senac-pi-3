@@ -1,8 +1,10 @@
 <h1 id="title">Malha</h1>
 <ul>
+	{{#each options}}
 	<li>
-		<button onclick="">Vértices</button>
-	</li><li>
-		<button onclick="">Arestas</button>
+		<button onclick="cerulean.nav.pushController('{{next}}', {})">
+			{{name}}<span class="chevron"/>
+		</button>
 	</li>
+	{{/each}}
 </ul>

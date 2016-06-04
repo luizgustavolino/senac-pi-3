@@ -48,15 +48,9 @@
             loadResource(java.getJARPath("css/interface"), "css", function(){
             loadResource(java.getJARPath("MapStyle"), "js", function(){
             loadResource(java.getJARPath("handlebars"), "js", function(){
-            loadResource(java.getJARPath("HandleBarsHelpers"), "js", function(){
             loadResource(java.getJARPath("Cerulean"), "js", function(){
-                cerulean.nav.setRootController("main-menu",
-                  { options: [
-                      { name:"Malha", next:"malha" },
-                      { name:"Centrais", next:"centrais" },
-                      { name:"Rotas", next:"rotas" }
-                  ]}
-                )
+            loadResource(java.getJARPath("HandleBarsHelpers"), "js", function(){
+                cerulean.nav.setRootController("main-menu", cerulean.nav.map)
             });});});});});});
         }
         
