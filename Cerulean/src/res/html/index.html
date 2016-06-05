@@ -7,18 +7,23 @@
     <script>
         
         var sys         = {}; // PROXY Function
+        var cerulean    = {}; // App singleton
         sys.log         = function(msg){ console.log(msg) }
         sys.getPath     = function(path) { return path; }
-        sys.isNative    = function() { return false; }
         
-        function onPageLoad(){
-            if(!sys.isNative()){
-                loadAllResources()
-            }
+        sys.resources = {};
+        sys.resources.list = {
+            "css":["reset", "interface"],
+            "js":[
+                "mapStyle","handlebars",
+                "cerulean.extensions", "cerulean.nav", "cerulean.map", "cerulean.coordinates", "cerulean.edges",
+                "cerulean.dom", "cerulean.tpl", "cerulean.viewstack", "cerulean.storage",
+                "handleBarsHelpers"
+            ]
         }
-        
-        function loadResource(path, type, callback){
-            
+
+        sys.resources.load = function(type, path){
+
             var head = document.head || document.getElementsByTagName('head')[0];
             
             switch(type){
@@ -26,8 +31,8 @@
                     var style       = document.createElement('link');
                     style.type      = 'text/css';
                     style.rel       = 'stylesheet';
-                    style.href      = path + ".css";
-                    style.onload    = callback;
+                    style.href      = "css/" + path + ".css";
+                    style.onload    = sys.resources.loadNext;
                     head.appendChild(style);
                     sys.log("loading ccs at " + style.href);
                     break;
@@ -35,34 +40,54 @@
                     var script      = document.createElement('script');
                     script.type     = 'text/javascript';
                     script.rel      = 'javascript';
-                    script.src      = path + ".js";
-                    script.onload   = callback; 
+                    script.src      = "js/" + path + ".js";
+                    script.onload   = sys.resources.loadNext; 
                     head.appendChild(script);
                     sys.log("loading js at " + path);
                     break;
             }
         }
-        
-        function loadAllResources(){
-            loadResource(sys.getPath("css/reset"), "css", function(){
-            loadResource(sys.getPath("css/interface"), "css", function(){
-            loadResource(sys.getPath("MapStyle"), "js", function(){
-            loadResource(sys.getPath("handlebars"), "js", function(){
-            loadResource(sys.getPath("Cerulean"), "js", function(){
-            loadResource(sys.getPath("HandleBarsHelpers"), "js", function(){
-                cerulean.nav.setRootController("main-menu", cerulean.nav.map)
-            });});});});});});
+
+        sys.resources.loadNext = function(){
+
+            var next = sys.resources.waitList.shift();
+
+            if(next){
+                sys.log("loading " + (sys.resources.waitListSize-sys.resources.waitList.length)
+                    + " of " + sys.resources.waitListSize);
+                sys.resources.load(next.type, next.data);
+            }else{
+                sys.resources.callback();
+            }
+        }
+
+        sys.resources.loadAll = function(callback){
+            sys.resources.waitList = new Array();
+            sys.resources.callback = callback
+            var precedence = ["css", "js"];
+            precedence.forEach(function(type){
+                sys.resources.list[type].forEach(function(data){
+                    sys.resources.waitList.push({type:type, data:data});
+                });
+            });
+            sys.resources.waitListSize = sys.resources.waitList.length
+            sys.resources.loadNext();
+        }
+
+        sys.bootstrap = function(){
+
+            sys.resources.loadAll(function(){
+                cerulean.tpl.show("body", "home", null, function(){
+                    cerulean.map.bootstrap()
+                    cerulean.nav.setRootController("main-menu", cerulean.nav.map)
+                    cerulean.storage.deserialize()
+                });
+            });
         }
         
     </script>
-  </head>
-  <body id="body" onload="onPageLoad()">
-    <div id="map"></div>
-    <div id ="menu">
-      <button id="back-button" class="back hidden transparent" onclick="cerulean.nav.popController()"></button>
-      <div id="menu-content"></div>
-    </div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVBdqZrrlivwdMFGWhXd_fjJ-8XFlkAHU"
-    async defer></script>
-  </body>
+    onload="sys.bootstrap()"></script>
+  </head>
+  <body id="body"></body>
 </html>
