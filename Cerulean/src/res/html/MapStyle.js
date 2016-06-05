@@ -46,7 +46,7 @@ mapStyles.Road = [
 
 mapStyles.standingVerticeIcon = {
     path: google.maps.SymbolPath.CIRCLE,
-    fillColor: '#3939B2',
+    fillColor: '#3154AB',
     fillOpacity: 1.0,
     strokeColor: '#FFFFFF',
     strokeOpacity: 0.0,
@@ -58,7 +58,7 @@ mapStyles.startVerticeIcon = {
     path: google.maps.SymbolPath.CIRCLE,
     fillColor: '#FFFFFF',
     fillOpacity: 1.0,
-    strokeColor: '#3939B2',
+    strokeColor: '#3154AB',
     strokeOpacity: 1.0,
     strokeWeight: 5.0,
     scale: 10

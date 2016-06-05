@@ -121,62 +121,105 @@ cerulean.map.view = new google.maps.Map(document.getElementById('map'), {
 
 cerulean.coordinates = {}
 cerulean.coordinates.list = []
+
 cerulean.coordinates.add = function(_lat, _lng) {
 
 	var point = new google.maps.Marker(mapStyles.Vertice(_lat, _lng));
 	point.addListener('click', cerulean.coordinates.clickAndDelegateAction(point));
+	point.addListener('drag', cerulean.coordinates.dragAction(point));
 	point.cerulean = {edgesIn:[], edgesOut:[]}
 
 	cerulean.coordinates.list.push(point)
-    cerulean.coordinates.updateCount()
-}
-
-cerulean.coordinates.updateCount = function(){
-	
-	var disconectedCount = 0
-	var allCoordinates = cerulean.coordinates.list.length
-	for (var i = 0; i < allCoordinates; i++) {
-		var n = cerulean.coordinates.list[i]
-		if(n.cerulean && n.cerulean.arestas && n.cerulean.arestas.length == 0){
-			disconectedCount++;
-		}
-	};
-	
-	cerulean.dom.byID("vertices.cadastrados", allCoordinates)
-	cerulean.dom.byID("vertices.isolados", disconectedCount)	
+    cerulean.coordinates.updateUI()
 }
 
 cerulean.coordinates.clickAndDelegateAction = function(point){
 	return function(){
+		
+		var allEdges = new Array()
+		point.cerulean.edgesOut.forEach(function(e){allEdges.push(e)});
+		point.cerulean.edgesIn.forEach(function(e){allEdges.push(e)});
+
+		allEdges.forEach(function(e){
+			cerulean.edges.remove(e);
+		})
 
 		google.maps.event.clearInstanceListeners(point)
 		point.set('draggable', false)
 		point.setMap(null)
 
-		var index = cerulean.coordinates.list.indexOf(point)
-		cerulean.coordinates.list.splice(index,1)
-		cerulean.coordinates.updateCount()
+		cerulean.coordinates.list.remove(point)
+		cerulean.coordinates.updateUI()
 	}
 }
 
 cerulean.coordinates.clickAndMakeEdgeAction = function(point){
 	return function(){
-		if(cerulean.edges.startCoordnate == null){
+
+		if(cerulean.edges.startCoordnate != point){
+			if(cerulean.edges.startCoordnate != null){
+				cerulean.edges.make(cerulean.edges.startCoordnate, point)
+				cerulean.edges.startCoordnate.set("icon", mapStyles.standingVerticeIcon);
+			}
 			cerulean.edges.startCoordnate = point
 			point.set("icon", mapStyles.startVerticeIcon);
 		}else{
-			if(cerulean.edges.startCoordnate != point){
-				cerulean.edges.make(cerulean.edges.startCoordnate, point)
-			}
-			cerulean.edges.startCoordnate.set("icon", mapStyles.standingVerticeIcon);
-			cerulean.edges.startCoordnate = null
+			cerulean.coordinates.clearFirstSelection();
 		}
+		
 	}
+}
+
+cerulean.coordinates.clearFirstSelection = function(){
+	if(cerulean.edges.startCoordnate){
+		cerulean.edges.startCoordnate.set("icon", mapStyles.standingVerticeIcon);
+		cerulean.edges.startCoordnate = null
+	}
+}
+
+cerulean.coordinates.dragAction = function(c){
+	return function(){
+		c.cerulean.edgesIn.forEach(function(inEdge){
+			if(inEdge.cerulean.reversable){
+				var d = (inEdge.cerulean.first == c) ? inEdge.cerulean.second : inEdge.cerulean.first
+				inEdge.setPath([d.getPosition(), c.getPosition()])
+			}else{
+				inEdge.setPath([inEdge.cerulean.from.getPosition(), c.getPosition()])
+			}
+		})
+
+		c.cerulean.edgesOut.forEach(function(outEdge){
+			if(!outEdge.cerulean.reversable){
+				outEdge.setPath([c.getPosition(), outEdge.cerulean.to.getPosition()])
+			}
+		})
+	}
+}
+
+cerulean.coordinates.updateUI = function(){
+	
+	var disconectedCount 	= 0
+	var registeredCount 	= cerulean.coordinates.list.length
+	cerulean.coordinates.list.forEach(function(coordinate){
+		if(coordinate.cerulean.edgesIn.length == 0 && coordinate.cerulean.edgesOut.length == 0){
+			disconectedCount++;
+		}
+	});
+	
+	cerulean.dom.byID("vertices.cadastrados", ""+cerulean.coordinates.list.length)
+	cerulean.dom.byID("vertices.isolados", ""+disconectedCount)	
+
+	cerulean.dom.byID("vertices.isolados.descricao", disconectedCount > 1 || disconectedCount == 0 ?
+		"Vértices desconectados" : "Vértice desconectado")
+	cerulean.dom.byID("vertices.cadastrados.descricao", registeredCount > 1 || registeredCount == 0 ?
+		"Vértices cadastrados" : "Vértice cadastrado")	
+	
 }
 
 cerulean.edges = {}
 cerulean.edges.list = []
 cerulean.edges.startCoordnate = null
+
 cerulean.edges.make = function(from, to){
 
 	// Função auxiliar para procurar
@@ -210,7 +253,7 @@ cerulean.edges.make = function(from, to){
 				edge.setOptions(mapStyles.ReversableEdge)
 
 				from.cerulean.edgesOut.push(edge)
-				from.cerulean.edgesIn.push(edge)
+				to.cerulean.edgesIn.push(edge)
 
 				return false
 			} else return true
@@ -223,13 +266,10 @@ cerulean.edges.make = function(from, to){
         	map: cerulean.map.view
 		});
 
+		cerulean.edges.list.push(edge)
 		edge.setOptions(mapStyles.Edge)
-		
-		edge.addListener('click', function(){
-			google.maps.event.clearInstanceListeners(edge)
-			edge.setMap(null)
-		});
 
+		edge.addListener('click', cerulean.edges.clickAndDeleteEdgeAction(edge));
 		edge.cerulean = {}
 		edge.cerulean.reversable = false
 		edge.cerulean.from = from 
@@ -239,6 +279,38 @@ cerulean.edges.make = function(from, to){
 		to.cerulean.edgesIn.push(edge)
 	}
 	
+	cerulean.edges.updateUI()
+}
+
+cerulean.edges.remove = function(edge){
+
+	if(edge.cerulean.reversable){
+		edge.cerulean.first.cerulean.edgesIn.remove(edge)
+		edge.cerulean.first.cerulean.edgesOut.remove(edge)
+		edge.cerulean.second.cerulean.edgesIn.remove(edge)
+		edge.cerulean.second.cerulean.edgesOut.remove(edge)
+	}else{
+		edge.cerulean.from.cerulean.edgesOut.remove(edge)
+		edge.cerulean.to.cerulean.edgesIn.remove(edge)
+	}
+
+	google.maps.event.clearInstanceListeners(edge)
+	edge.setMap(null)
+	cerulean.edges.list.remove(edge)
+	cerulean.edges.updateUI()
+}
+
+cerulean.edges.clickAndDeleteEdgeAction = function(edge){
+	return function(){
+		cerulean.edges.remove(edge)
+	}
+}
+
+cerulean.edges.updateUI = function(){
+	var connectedCount = cerulean.edges.list.length
+	cerulean.dom.byID("arestas.cadastradas", ""+connectedCount)
+	cerulean.dom.byID("arestas.cadastradas.descricao", connectedCount > 1 || connectedCount == 0 ?
+		"Arestas cadastradas" : "Aresta cadastrada")
 }
 
 cerulean.coordinates.hideAll = function(){
@@ -299,7 +371,6 @@ cerulean.tpl.show = function(tagID, templateName, data){
         var r = new XMLHttpRequest();
         var base = sys.getPath("templates/");
         var loc = base + templateName+".template.html";
-        sys.log("loading html template: " + loc);
         
         r.open("GET", loc, true);
         r.onreadystatechange = function () {
@@ -354,38 +425,55 @@ cerulean.nav.onPush["vertices"] = function (){
  	});
 
  	cerulean.map.view.set('cursor', 'crosshair')
- 	cerulean.coordinates.updateCount()
+ 	cerulean.coordinates.updateUI()
 
- 	var allCoordinates = cerulean.coordinates.list.length
-	for (var i = 0; i < allCoordinates; i++) {
-		var n = cerulean.coordinates.list[i]
-		n.set('clickable', true); n.set('draggable', true)
-		n.addListener('click', cerulean.coordinates.clickAndDelegateAction(n));
-	};
+	cerulean.coordinates.list.forEach(function(coordinate){
+		coordinate.set('clickable', true);
+		coordinate.set('draggable', true)
+		coordinate.addListener('click', cerulean.coordinates.clickAndDelegateAction(coordinate));
+		coordinate.addListener('drag', cerulean.coordinates.dragAction(coordinate));
+	});
 }
 
 cerulean.nav.onPop["vertices"] = function (){
+
 	google.maps.event.clearInstanceListeners(cerulean.map.view)
 
-	var allCoordinates = cerulean.coordinates.list.length
-	for (var i = 0; i < allCoordinates; i++) {
-		var n = cerulean.coordinates.list[i]
-		n.set('clickable', false);
-		n.set('draggable', false)
-		google.maps.event.clearInstanceListeners(n)
-	};
+	cerulean.coordinates.list.forEach(function(coordinate){
+		coordinate.set('clickable', false);
+		coordinate.set('draggable', false);
+		google.maps.event.clearInstanceListeners(coordinate);
+	});
 
 }
 
 cerulean.nav.onPush["arestas"] = function (){
-	
- 	var allCoordinates = cerulean.coordinates.list.length
-	for (var i = 0; i < allCoordinates; i++) {
-		var n = cerulean.coordinates.list[i]
-		n.set('clickable', true);
-		n.set('draggable', false)
-		n.addListener('click', cerulean.coordinates.clickAndMakeEdgeAction(n));
-	};
+
+	cerulean.edges.updateUI();
+
+	cerulean.coordinates.list.forEach(function(c){
+		c.set('clickable', true);
+		c.addListener('click', cerulean.coordinates.clickAndMakeEdgeAction(c));
+	});
+
+	cerulean.edges.list.forEach(function(e){
+		e.addListener('click', cerulean.edges.clickAndDeleteEdgeAction(e));
+		e.set('clickable', true);
+	});
+}
+
+cerulean.nav.onPop["arestas"] = function (){
+
+	cerulean.coordinates.clearFirstSelection()
+
+	cerulean.coordinates.list.forEach(function(c){
+		c.set('clickable', false);
+		google.maps.event.clearInstanceListeners(c)
+	});
+	cerulean.edges.list.forEach(function(e){
+		e.set('clickable', false);
+		google.maps.event.clearInstanceListeners(e)
+	});
 }
 
 // --- [ EOF ] ---
