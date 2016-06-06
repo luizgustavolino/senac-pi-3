@@ -140,8 +140,6 @@ cerulean.rotes.dijkstra = function(startCentral, addresses){
 	var chart = {};
 	var ways = addresses.slice(0);
 	ways.push({address:"central"});
-
-	var metaGraph = new Graph();
 	ways.forEach(function(mAdr){
 		var outs = {};
 		ways.forEach(function(nAdr){
@@ -157,19 +155,47 @@ cerulean.rotes.dijkstra = function(startCentral, addresses){
 	});
 
 	// 3 - Escolhe a rota
-	var visited = []
-	var findShortest = function(current){
-		var min = 9999;
-		var result;
-		current.outs.forEach(function(next){
-			if(next.distance < min){
-				min = next.distance;
-				
+	var visited = ["central"]
+	var finalPath = []
+
+	var getShortest = function(current){
+		
+		var min 	= 9999;
+		var address = null;
+
+		for(key in current){
+
+			if (!current.hasOwnProperty(key)) continue;
+			var next = current[key];
+
+			if (!visited.length || visited.every(function(v){ return v != key})){
+				if(next.distance < min){
+					min = next.distance;
+					address = key;
+				}
 			}
-		})
+		}
+
+		if(address != null){
+			visited.push(address);
+			return {name: address, data:chart[address]};
+		}else{
+			return null;
+		}
 	}
 
+	var visit = function(place, start){
+		var nextshort = getShortest(start);
+		finalPath.push(place);
+		if(!nextshort){
+			return;
+		}else {
+			visit(nextshort.name, nextshort.data);
+		}
+	}
 
+	visit("central", chart["central"]);
+	sys.log(finalPath);
 
 	cerulean.nav.setUserInteractionEnabled(true);
 }
