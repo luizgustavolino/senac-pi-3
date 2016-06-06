@@ -139,3 +139,13 @@ cerulean.coordinates.distanceBetweenPositions = function(a, b){
 
 }
 
+cerulean.coordinates.fromRid = function(tid){
+	for (var i = cerulean.coordinates.list.length - 1; i >= 0; i--) {
+		var c = cerulean.coordinates.list[i];
+		if(c.cerulean.rid == tid){
+			return c;
+		}
+	};
+
+	return null;
+}

@@ -14,6 +14,20 @@ cerulean.rotes.selectCentral = function(name) {
 	cerulean.nav.pushController('rotas.buscar', {name:name})
 }
 
+cerulean.rotes.drawPath = function(latLongList, color){
+
+	var lines = new google.maps.Polyline({
+		path: latLongList,
+		geodesic: true,
+		strokeColor: color,
+		strokeOpacity: 1.0,
+		strokeWeight: 4
+	});
+
+	lines.setMap(cerulean.map.view)
+
+}
+
 cerulean.rotes.doSearch = function(){
 
 	var addressesField 	= cerulean.dom.byID("rotes.addresses");
@@ -218,17 +232,19 @@ cerulean.rotes.dijkstra = function(startCentral, addresses){
 			var stepCount = 0;
 			var biker = startCentral.bikers[i];
 
-			for ( /**/ ; currentAddressCount < addresses.length -1; currentAddressCount++) {
+			for ( /**/ ; currentAddressCount < addresses.length; currentAddressCount++) {
 				
 				var currentAddress = addresses[currentAddressCount];
+				if(packForBiker[biker] == null) packForBiker[biker] = [];
+				packForBiker[biker].push(currentAddress.address);
+
+				if(currentAddressCount == addresses.length -1) break;
+
 				var nextAddress = addresses[currentAddressCount+1];
 				var stepSize = chart[currentAddress.address][nextAddress.address].distance;
-				
-				if(packForBiker[biker] == null) packForBiker[biker] = [];
-				packForBiker[biker].push(currentAddress);
-
 				stepCount += stepSize;
-				if(stepCount > eachDistance || addresses.length - currentAddressCount - 1 == startCentral.bikers.length - i) {
+
+				if(stepCount > eachDistance || addresses.length - currentAddressCount == startCentral.bikers.length - i) {
 					currentAddressCount++;
 					break;
 				}
@@ -236,7 +252,55 @@ cerulean.rotes.dijkstra = function(startCentral, addresses){
 		}
 	}
 
-	sys.log(packForBiker);
+	var colorForBiker = {}
+	for (var i = 0; i < startCentral.bikers.length; i++) {
+		var colors = ["#6BC6E4", "#6B6CE4", "#6CECD1", "#6CEC7A", "#B0EC28"]
+		colorForBiker[startCentral.bikers[i]] = colors[i%5];
+	};
+
+	var drawPathForBiker = function(bikerName, packs){
+		
+		packs.unshift("central")
+		var paths = [];
+
+		var searchInAddresses = function(tag){
+
+			if(tag == "central"){
+				return startCentral.location;
+			}
+
+			for (var i = addresses.length - 1; i >= 0; i--) {
+				var ad = addresses[i];
+				if(ad.address == tag) return ad.point;
+			};
+		}
+
+		var allCooridnates = []
+		for (var i = 0; i < packs.length -1; i++) {
+			var pack = chart[packs[i]][packs[i+1]];
+
+			for (var n = 0; n < pack.path.length; n++) {
+				var itemTag = pack.path[n];
+				var from = searchInAddresses(itemTag)
+				
+				if(from == null) {
+					var fromObj = cerulean.coordinates.fromRid(itemTag);
+					if(fromObj) from = fromObj.getPosition();
+					else sys.log("not found: "+item)
+				}
+
+				allCooridnates.push({lat:from.lat(), lng:from.lng() })
+
+			}
+		};
+
+		cerulean.rotes.drawPath(allCooridnates, colorForBiker[bikerName]);
+	
+	}
+
+	startCentral.bikers.forEach(function(bikerName){
+		drawPathForBiker(bikerName, packForBiker[bikerName]);
+	})
 
 	cerulean.nav.setUserInteractionEnabled(true);
 }
