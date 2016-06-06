@@ -126,9 +126,9 @@ cerulean.storage.deserialize = function(){
 					var address = lineData[1];
 					var lat = parseFloat(lineData[2]);
 					var lng = parseFloat(lineData[3]);
-					var bikers = lineData[4].split(",");
+					var bikers = lineData[4] ? lineData[4].split(",") : [];
 					var pnt = new google.maps.LatLng(lat,lng);
-					cerulean.centrals.add(pnt, address, name);
+					cerulean.centrals.add(pnt, address, name, bikers);
 				}
 			})
 

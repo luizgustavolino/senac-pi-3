@@ -225,4 +225,8 @@ html, body {
   text-align: center;
 }
 
+.info b{
+  font-weight: 800;
+  color: #FF6F55;
+}
 
