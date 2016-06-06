@@ -80,3 +80,7 @@ cerulean.nav.dataFor["rotas"] = function(){
 	return cerulean.centrals.makeOptionsArray()
 }
 
+cerulean.nav.onPush["rotas.buscar"] = function (){
+
+}
+

@@ -44,6 +44,12 @@ function isFunction(functionToCheck) {
 }
 
 
-
+function rotate(cx, cy, x, y, radians) {
+    var cos = Math.cos(radians);
+    var sin = Math.sin(radians);
+    var px = (cos * (x-cx)) + (sin * (y-cy)) + cx;
+    var py = (cos * (y-cy)) - (sin * (x-cx)) + cy;
+    return {x:px, y: py};
+}
 
 

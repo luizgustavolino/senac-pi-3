@@ -67,6 +67,7 @@ cerulean.edges.make = function(from, to, _hidden){
 		edge.cerulean.reversable = false;
 		edge.cerulean.from = from ;
 		edge.cerulean.to = to;
+		edge.cerulean.distance = cerulean.coordinates.distanceBetweenCoordinates(from, to);
 		
 		from.cerulean.edgesOut.push(edge);
 		to.cerulean.edgesIn.push(edge);
@@ -163,15 +164,19 @@ cerulean.edges.medianPoint = function(edge){
 	return new google.maps.LatLng({lat: lat, lng: lng});
 }
 
-cerulean.edges.seachEdgeForPosition = function(c){
+cerulean.edges.seachEdgeForPosition = function(c, listMode){
+
+	var edgeList = [];
+
 	for (var i = cerulean.edges.list.length - 1; i >= 0; i--) {
 		var edge = cerulean.edges.list[i]
 		if(cerulean.edges.seachPositionInsideEdgeRadius(edge, c)){
-			return edge;
+			if(listMode) edgeList.push(edge);
+			else return edge;
 		}
 	};
 
-	return false
+	return listMode ? edgeList : false;
 }
 
 cerulean.edges.seachPositionInsideEdgeRadius = function(edge, latLgn){
@@ -202,3 +207,42 @@ cerulean.edges.addDebugCircle = function(edge){
     cerulean.map.view.setCenter(median);
 
 }
+
+cerulean.edges.perpendicularDistante = function(edge, point){
+
+	var edgeComps = cerulean.edges.componentsOf(edge)
+
+	if(edgeComps[0].getPosition().lat() > edgeComps[1].getPosition().lat()){
+		var tmp = edgeComps[1]
+		edgeComps[1] = edgeComps[0]
+		edgeComps[0] = tmp
+	}
+
+	var c1x = edgeComps[0].getPosition().lng();
+	var c1y = edgeComps[0].getPosition().lat();
+	var c2x = edgeComps[1].getPosition().lng();
+	var c2y = edgeComps[1].getPosition().lat();
+	var px 	= point.lng();
+	var py  = point.lat();
+
+	var m = (c2y-c1y)/(c2x-c1x);
+	var theta = Math.atan(m);
+
+	var rc2 = rotate(c1x, c1y, c2x, c2y, theta)
+	var rp 	= rotate(c1x, c1y, px, py, theta)
+
+	if(sys.debug){
+		if(c1y != rc2.y) sys.log("check point rotation!")
+	}
+
+	var distance = Math.abs(rp.y-c1y)
+	var np 		= rotate(c1x, c1y, rp.x, rc2.y, theta*-1)
+	
+	if(sys.debug){
+		var check 	= rotate(c1x, c1y, rc2.x, rc2.y, theta*-1)
+		if(check.y != c2y) sys.log("check point rotation!")
+	}
+
+	return {d:distance, p: new google.maps.LatLng({lat: np.y, lng: np.x})}
+
+} 

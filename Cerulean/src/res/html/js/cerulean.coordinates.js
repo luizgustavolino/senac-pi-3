@@ -6,7 +6,7 @@ cerulean.coordinates.list = []
 
 cerulean.coordinates.add = function(_lat, _lng, _rrid, _hidden) {
 	
-	sys.log("adding coordinate: " + _lat +" , " + _lng)
+	if(sys.debug) sys.log("adding coordinate: " + _lat +" , " + _lng)
 
 	var point = new google.maps.Marker(mapStyles.Vertice(_lat, _lng));
 	point.cerulean = {rid: _rrid ? _rrid : cerulean.rid.next(), edgesIn:[], edgesOut:[]}
@@ -138,5 +138,4 @@ cerulean.coordinates.distanceBetweenPositions = function(a, b){
     return distance;
 
 }
-
 

@@ -128,15 +128,13 @@ cerulean.centrals.searchBeforeRegister = function(tag, className){
 					bikers: bikersList
 				}
 
-				cerulean.dom.addClass(cerulean.dom.byID("central.register.form"), "hidden");
-	            cerulean.dom.removeClass(cerulean.dom.byID("central.register.accept"), "hidden");
+				cerulean.dom.swap("central.register.form", "central.register.accept")
 				return
 			}
 
 		}
-		
-		cerulean.dom.addClass(cerulean.dom.byID("central.register.form"), "hidden");
-        cerulean.dom.removeClass(cerulean.dom.byID("central.register.erro"), "hidden");
+
+		cerulean.dom.swap("central.register.form", "central.register.erro")
 		
 	})
 }

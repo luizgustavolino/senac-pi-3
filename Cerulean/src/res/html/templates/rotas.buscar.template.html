@@ -1,2 +1,21 @@
-<h1>Roterização</h1>
-<p>{{name}}</p>
+<h1>{{name}}</h1>
+<div id="rotes.addresses.form">
+	<div class="field">
+		<p class="name">Roteiro<p>
+		<textarea oninput="cerulean.dom.removeClass(this, 'emptyfield')" id="rotes.addresses"></textarea>
+		<p class="help">Digite os endereços de entrega, um em cada linha. Exemplo: Paulista, 1745.</p>
+	</div>
+	<div class="field">
+		<button class="fullButton" onclick="cerulean.rotes.doSearch()">Traçar rotas</button>
+	</div>
+</div>
+<div id="rotes.geocoding" class="hidden">
+	<p>
+		<b class="green" id="rotes.geocoding.count">0</b><br/>
+		<span>Endereços geocodificados</span>
+	</p>
+	<p id="rotes.geocoding.misscountp" class="hidden">
+		<b id="rotes.geocoding.misscount">0</b><br/>
+		<span>Endereços fora da malha</span>
+	</p>
+</div>

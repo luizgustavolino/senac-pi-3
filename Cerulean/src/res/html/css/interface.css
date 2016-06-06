@@ -185,13 +185,17 @@ html, body {
   padding: 10px 10px 0px 10px;
 }
 
-.field input{
+.field input, .field textarea{
   border: 2px solid #FFFFFF;
   background-color: transparent;
   width: 100%;
   font-size: 18px;
   color: white;
   padding: 6px;
+}
+
+.field textarea{
+  height: 320px;
 }
 
 .emptyfield{
@@ -210,6 +214,7 @@ html, body {
 .field .help{
   border: none;
   margin-top: -8px;
+  margin-right: 18px;
   font-size: 12px;
   text-align: left;
   margin-left: 18px;

@@ -28,3 +28,8 @@ cerulean.dom.removeClass = function(tag, className) {
 		tag.className = tag.className.replace( regex ,'')
 	}
 }
+
+cerulean.dom.swap = function(divOut, divIn) {
+	cerulean.dom.addClass(cerulean.dom.byID(divOut), "hidden");
+	cerulean.dom.removeClass(cerulean.dom.byID(divIn), "hidden");
+}
