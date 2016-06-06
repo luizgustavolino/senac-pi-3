@@ -155,8 +155,9 @@ cerulean.rotes.dijkstra = function(startCentral, addresses){
 	});
 
 	// 3 - Escolhe a rota
-	var visited = ["central"]
-	var finalPath = []
+	var visited = ["central"];
+	var finalPath = [];
+	var totalDistance = 0;
 
 	var getShortest = function(current){
 		
@@ -178,6 +179,7 @@ cerulean.rotes.dijkstra = function(startCentral, addresses){
 
 		if(address != null){
 			visited.push(address);
+			totalDistance += min;
 			return {name: address, data:chart[address]};
 		}else{
 			return null;
@@ -195,7 +197,46 @@ cerulean.rotes.dijkstra = function(startCentral, addresses){
 	}
 
 	visit("central", chart["central"]);
-	sys.log(finalPath);
+
+	// 4 - Avalia o caminho pela quantidade de pessoas
+	var bikeCount = startCentral.bikers.length;
+	var packForBiker = {};
+	if(bikeCount > addresses.length){
+		for (var i = addresses.length - 1; i >= 0; i--) {
+			var biker  = startCentral.bikers[i];
+			var address = addresses[i];
+			packForBiker[biker] = [address];
+		};
+	}else{
+
+		var eachDistance = totalDistance/bikeCount;
+		var currentAddressCount = 0;
+		
+
+		for (var i = 0; i < startCentral.bikers.length; i++) {
+
+			var stepCount = 0;
+			var biker = startCentral.bikers[i];
+
+			for ( /**/ ; currentAddressCount < addresses.length -1; currentAddressCount++) {
+				
+				var currentAddress = addresses[currentAddressCount];
+				var nextAddress = addresses[currentAddressCount+1];
+				var stepSize = chart[currentAddress.address][nextAddress.address].distance;
+				
+				if(packForBiker[biker] == null) packForBiker[biker] = [];
+				packForBiker[biker].push(currentAddress);
+
+				stepCount += stepSize;
+				if(stepCount > eachDistance || addresses.length - currentAddressCount - 1 == startCentral.bikers.length - i) {
+					currentAddressCount++;
+					break;
+				}
+			}
+		}
+	}
+
+	sys.log(packForBiker);
 
 	cerulean.nav.setUserInteractionEnabled(true);
 }
