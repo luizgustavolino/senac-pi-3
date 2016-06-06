@@ -33,6 +33,5 @@ cerulean.nav.map =
                 ]
             }
         },
-        { name:"Rotas", template:"rotas" },
-        { name:"Salvar", template:"salvar",next: { options:[] }}
+        { name:"Rotas", template:"rotas" }
     ]}

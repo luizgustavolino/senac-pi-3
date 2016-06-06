@@ -42,6 +42,7 @@ cerulean.coordinates.clickAndDelegateAction = function(point){
 
 		cerulean.coordinates.list.remove(point)
 		cerulean.coordinates.updateUI()
+		cerulean.storage.serialize()
 	}
 }
 
@@ -50,8 +51,9 @@ cerulean.coordinates.clickAndMakeEdgeAction = function(point){
 
 		if(cerulean.edges.startCoordnate != point){
 			if(cerulean.edges.startCoordnate != null){
-				cerulean.edges.make(cerulean.edges.startCoordnate, point)
+				cerulean.edges.make(cerulean.edges.startCoordnate, point);
 				cerulean.edges.startCoordnate.set("icon", mapStyles.standingVerticeIcon);
+				cerulean.storage.serialize();
 			}
 			cerulean.edges.startCoordnate = point
 			point.set("icon", mapStyles.startVerticeIcon);

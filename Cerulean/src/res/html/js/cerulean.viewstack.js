@@ -17,6 +17,7 @@ cerulean.nav.onPush["vertices"] = function (){
 	
 	cerulean.map.view.addListener('click', function(e) {
     	cerulean.coordinates.add(e.latLng.lat(), e.latLng.lng());
+    	cerulean.storage.serialize();
  	});
 
  	cerulean.map.view.set('cursor', 'crosshair')

@@ -109,6 +109,7 @@ cerulean.edges.remove = function(edge){
 	edge.setMap(null)
 	cerulean.edges.list.remove(edge)
 	cerulean.edges.updateUI()
+	cerulean.storage.serialize()
 }
 
 cerulean.edges.clickAndDeleteEdgeAction = function(edge){

@@ -29,7 +29,6 @@ cerulean.storage.serialize = function(){
 		serialized += ";out:"
 		c.cerulean.edgesOut.forEach(function(edge){
 			var destiny = cerulean.edges.counterPartOf(edge, c)
-			if(destiny) sys.log(destiny.cerulean.rid)
 			if(destiny) return serialized += (--trigger ? "," : "")+parseInt(destiny.cerulean.rid)
 		})
 		serialized += ";"
@@ -49,6 +48,7 @@ cerulean.storage.serialize = function(){
 	if (typeof(Storage) !== "undefined") {
 		localStorage.setItem("cerulean.coordinates", outputCoordinates);
 		localStorage.setItem("cerulean.centrals", outputCentrals);
+		sys.log("save...")
 	}else{
 		sys.log("locastorage is off!")
 	}
