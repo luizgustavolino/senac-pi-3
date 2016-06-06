@@ -18,4 +18,21 @@ cerulean.map.bootstrap = function(){
             position: google.maps.ControlPosition.LEFT_CENTER
         }
     });
+
+    cerulean.map.geocoder = new google.maps.Geocoder();
+
 };
+
+cerulean.map.doGeocoding = function(address, callback){
+
+    cerulean.map.geocoder.geocode(
+        {'address': address},
+        function(results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+            callback(results[0].geometry.location);
+        } else {
+            callback()
+        }
+    });
+
+}

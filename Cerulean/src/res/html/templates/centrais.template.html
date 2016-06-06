@@ -1,0 +1,10 @@
+<h1 id="title">Centrais</h1>
+<ul>
+	{{#each options}}
+	<li>
+		<button onclick="cerulean.nav.pushController('{{next}}', {})">
+			{{name}}<span class="chevron"/>
+		</button>
+	</li>
+	{{/each}}
+</ul>

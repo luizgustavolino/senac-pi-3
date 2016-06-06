@@ -4,17 +4,24 @@
 cerulean.coordinates = {}
 cerulean.coordinates.list = []
 
-cerulean.coordinates.add = function(_lat, _lng, _rrid) {
+cerulean.coordinates.add = function(_lat, _lng, _rrid, _hidden) {
 	
 	sys.log("adding coordinate: " + _lat +" , " + _lng)
 
 	var point = new google.maps.Marker(mapStyles.Vertice(_lat, _lng));
-	point.addListener('click', cerulean.coordinates.clickAndDelegateAction(point));
-	point.addListener('drag', cerulean.coordinates.dragAction(point));
 	point.cerulean = {rid: _rrid ? _rrid : cerulean.rid.next(), edgesIn:[], edgesOut:[]}
+	cerulean.coordinates.list.push(point);
+    cerulean.coordinates.updateUI();
 
-	cerulean.coordinates.list.push(point)
-    cerulean.coordinates.updateUI()
+    if(_hidden){
+    	point.setMap(null);
+    	point.set('clickable', false);
+		point.set('draggable', false);
+    }else{
+    	point.addListener('click', cerulean.coordinates.clickAndDelegateAction(point));
+		point.addListener('drag', cerulean.coordinates.dragAction(point));
+    }
+
     return point;
 }
 
@@ -112,3 +119,22 @@ cerulean.coordinates.updateUI = function(){
 		"Vértices cadastrados" : "Vértice cadastrado")	
 	
 }
+
+cerulean.coordinates.distanceBetweenCoordinates = function(a, b){
+	return cerulean.coordinates.distanceBetweenPositions(a.getPosition(), b.getPosition())	
+}
+
+cerulean.coordinates.distanceBetweenPositions = function(a, b){
+
+	var alat = a.lat();
+	var alng = a.lng();
+
+	var blat = b.lat();
+	var blng = b.lng();
+
+	var distance = Math.sqrt(Math.pow((blat - alat), 2) + Math.pow((blng - alng), 2));
+    return distance;
+
+}
+
+

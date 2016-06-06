@@ -10,6 +10,7 @@
         var cerulean    = {}; // App singleton
         sys.log         = function(msg){ console.log(msg) }
         sys.getPath     = function(path) { return path; }
+        sys.debug       = false
         
         sys.resources = {};
         sys.resources.list = {
@@ -17,7 +18,7 @@
             "js":[
                 "mapStyle","handlebars",
                 "cerulean.extensions", "cerulean.nav", "cerulean.map", "cerulean.coordinates", "cerulean.edges",
-                "cerulean.dom", "cerulean.tpl", "cerulean.viewstack", "cerulean.storage",
+                "cerulean.dom", "cerulean.tpl", "cerulean.viewstack", "cerulean.storage", "cerulean.centrals",
                 "handleBarsHelpers"
             ]
         }
@@ -75,7 +76,6 @@
         }
 
         sys.bootstrap = function(){
-
             sys.resources.loadAll(function(){
                 cerulean.tpl.show("body", "home", null, function(){
                     cerulean.map.bootstrap()

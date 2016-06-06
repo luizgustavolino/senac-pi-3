@@ -4,11 +4,13 @@
 cerulean.nav.onPush["malha"] = function (){
 	cerulean.map.view.set('styles', mapStyles.Mesh)
 	cerulean.coordinates.showAll()
+	cerulean.edges.showAll()
 }
 
 cerulean.nav.onPop["malha"] = function (){
 	cerulean.map.view.set('styles', mapStyles.Road)
 	cerulean.coordinates.hideAll()
+	cerulean.edges.hideAll()
 }
 
 cerulean.nav.onPush["vertices"] = function (){
@@ -67,6 +69,10 @@ cerulean.nav.onPop["arestas"] = function (){
 		e.set('clickable', false);
 		google.maps.event.clearInstanceListeners(e)
 	});
+}
+
+cerulean.nav.onPop["central.cadastrar"] = function (){
+	cerulean.centrals.cancelRegister()
 }
 
 cerulean.nav.onPush["salvar"] = function(){

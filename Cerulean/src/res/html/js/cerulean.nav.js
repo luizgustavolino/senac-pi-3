@@ -81,7 +81,8 @@ cerulean.nav.setTitle = function(newTitle) {
 	tag.innerHTML = newTitle
 }
 
-cerulean.nav.setUserInteractionEnabled = function(enabled){
+cerulean.nav.setUserInteractionEnabled = function(enabled, showLoading){
+
 	if(!enabled && !cerulean.nav.overlay){
 		cerulean.nav.overlay = document.createElement('div');		
 		cerulean.dom.addClass(cerulean.nav.overlay, "overlay");
@@ -90,5 +91,11 @@ cerulean.nav.setUserInteractionEnabled = function(enabled){
 	}else if(enabled && cerulean.nav.overlay){
 		cerulean.nav.overlay.remove()
 		cerulean.nav.overlay = null
+	}
+
+	if(cerulean.nav.overlay && showLoading){
+		cerulean.dom.addClass(cerulean.nav.overlay, "loading")
+	}else if(cerulean.nav.overlay){
+		cerulean.dom.removeClass(cerulean.nav.overlay, "loading")
 	}
 }

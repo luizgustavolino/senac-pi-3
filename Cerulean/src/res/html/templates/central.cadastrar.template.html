@@ -1,0 +1,43 @@
+<h1>Cadastro<h1>
+<div id="central.register.form">
+	<div class="field">
+		<p class="name">Nome<p>
+		<input oninput="cerulean.dom.removeClass(this, 'emptyfield')" id="central.name"/>
+		<p class="help">Exemplo: Depósito central.</p>
+	</div>
+	<div class="field">
+		<p class="name">Endereço:<p>
+		<input oninput="cerulean.dom.removeClass(this, 'emptyfield')" id="central.address"/>
+		<p class="help">Exemplo: Avenida Paulista, 1745.</p>
+	</div>
+	<div class="field">
+		<p class="name">Ciclistas:<p>
+		<input oninput="cerulean.dom.removeClass(this, 'emptyfield')" id="central.bikers"/>
+		<p class="help">Exemplo: João da Silva, Marcos Gomes. Insira os nomes separados por vírgula. Somentes são válidas as letras de A-Z, espaços e vírgulas.</p>
+	</div>
+	<div class="field">
+		<button class="fullButton" onclick="cerulean.centrals.searchBeforeRegister()">Validar</button>
+	</div>
+</div>
+<div id="central.register.accept" class="hidden">
+	<p class="green">Endereço encontrado!<p>
+	<div class="help">
+		<p>Um novo registro será criado para essa localidade. Por favor, verifique os dados e a posição no mapa.</p>
+	</div>
+	<div class="field">
+		<button class="fullButton" onclick="cerulean.centrals.doRegister()">Confirmar e salvar</button>
+	</div>
+</div>
+<div id="central.register.success" class="hidden">
+	<p class="green">Central registrada!<p>
+	<div class="help">
+		<p>Além disso, a sessão foi salva. Você agora pode cadastrar ciclistas para esta central</p>
+	</div>
+</div>
+<div id="central.register.erro" class="hidden">
+	<p class="red">Ops! Não encontramos esse endereço!<p>
+	<div class="help">
+		<p>Fica mais fácil encontrar se você não abreviar e descrever o logradouro. Por exemplo, "Faria Lima", na verdade é "Avenida Brigadeiro Faria Lima".</p>
+		<p>Além disso, o endereço procurado tem de estar na área de abrangência da malha. Verifique se a malha chega até a área pretendida.</p>
+	</div>
+</div>

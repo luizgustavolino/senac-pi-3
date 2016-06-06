@@ -58,6 +58,10 @@ html, body {
     top: 0;
 }
 
+.loading{
+    cursor: wait;
+}
+
 .nav button {
     background-color: rgba(31, 164, 206, 0.9);
     border: none;
@@ -107,6 +111,16 @@ html, body {
     font-size: 18px;
     font-family: 'Open Sans', sans-serif;
     font-weight: 400;
+    line-height: normal;
+    text-align: left;
+}
+
+.red{
+  color: #FF4336 !important;
+}
+
+.green{
+  color: #AFFF35 !important; 
 }
 
 .nav b {
@@ -163,3 +177,52 @@ html, body {
   overflow: scroll;
   height: 100%;
 }
+
+
+.field .name{
+  text-align: left;
+  color: #FFB831;
+  padding: 10px 10px 0px 10px;
+}
+
+.field input{
+  border: 2px solid #FFFFFF;
+  background-color: transparent;
+  width: 100%;
+  font-size: 18px;
+  color: white;
+  padding: 6px;
+}
+
+.emptyfield{
+  border: 2px solid #FF3567 !important;
+}
+
+.field .adressfield{
+  border: 2px solid #FFFFFF;
+  background-color: transparent;
+  width: 100%;
+  font-size: 18px;
+  color: white;
+  padding: 6px; 
+}
+
+.field .help{
+  border: none;
+  margin-top: -8px;
+  font-size: 12px;
+  text-align: left;
+  margin-left: 18px;
+  color: #999;
+  padding: 0px;
+}
+
+.field .fullButton{
+  padding: 15px;
+  border-radius: 20px;
+  margin: 20px 10px 10px 10px;
+  width: 280px;
+  text-align: center;
+}
+
+

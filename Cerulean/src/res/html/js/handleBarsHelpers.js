@@ -21,7 +21,18 @@ cerulean.nav.map =
         		]
         	}
         },
-        { name:"Centrais", template:"centrais" },
+        {
+            name:"Centrais",
+            template:"centrais",
+            next: {
+                options:[
+                    {
+                        name: "Cadastrar",
+                        next: "central.cadastrar"
+                    }
+                ]
+            }
+        },
         { name:"Rotas", template:"rotas" },
         { name:"Salvar", template:"salvar",next: { options:[] }}
     ]}
