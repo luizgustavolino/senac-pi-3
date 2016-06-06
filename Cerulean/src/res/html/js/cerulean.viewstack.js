@@ -84,3 +84,7 @@ cerulean.nav.onPush["rotas.buscar"] = function (){
 
 }
 
+cerulean.nav.onPop["rotas.buscar"] = function (){
+	cerulean.rotes.clear()
+}
+

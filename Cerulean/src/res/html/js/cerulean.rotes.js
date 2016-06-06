@@ -14,6 +14,18 @@ cerulean.rotes.selectCentral = function(name) {
 	cerulean.nav.pushController('rotas.buscar', {name:name})
 }
 
+cerulean.rotes.paths = []
+cerulean.rotes.stats = ""
+
+cerulean.rotes.drawPack = function(latLong, color){
+
+	var mark = new google.maps.Marker(
+		mapStyles.Package(latLong.lat(), latLong.lng(), color)
+	)
+
+	cerulean.rotes.paths.push(mark)
+}
+
 cerulean.rotes.drawPath = function(latLongList, color){
 
 	var lines = new google.maps.Polyline({
@@ -24,8 +36,14 @@ cerulean.rotes.drawPath = function(latLongList, color){
 		strokeWeight: 4
 	});
 
-	lines.setMap(cerulean.map.view)
+	lines.setMap(cerulean.map.view);
+	cerulean.rotes.paths.push(lines);
+}
 
+cerulean.rotes.clear = function(){
+	cerulean.rotes.paths.forEach(function(p){
+		p.setMap(null);
+	})
 }
 
 cerulean.rotes.doSearch = function(){
@@ -38,12 +56,20 @@ cerulean.rotes.doSearch = function(){
 		return
 	}
 
+	var timer = new Date().getTime();
+	cerulean.rotes.stats = "";
+
 	cerulean.nav.setUserInteractionEnabled(false, true);
 	cerulean.dom.swap("rotes.addresses.form", "rotes.geocoding")
 
 	var addressesList = addresses.split("\n");
 	cerulean.rotes.batchGeocode(addressesList, function(response){
 		cerulean.rotes.dijkstra(cerulean.rotes.currentCentral, response);
+
+		var end = new Date().getTime();
+		cerulean.dom.byID("rotes.geocoding.timeTaken", (end - timer)/1000);
+		cerulean.dom.byID("rotes.geocoding.stats", cerulean.rotes.stats);
+		cerulean.dom.removeClass(cerulean.dom.byID("rotes.geocoding.timer"), "hidden")
 	});
 }
 
@@ -56,7 +82,7 @@ cerulean.rotes.batchGeocode = function(addresses, callback){
 	var markResponse = function(address, response){
 		return function(response){
 
-			if(response.lat() != 0 && cerulean.edges.seachEdgeForPosition(response)){
+			if(response && response.lat() != 0 && cerulean.edges.seachEdgeForPosition(response)){
 				validAddresses.push({address:address, point:response});
 				cerulean.dom.byID("rotes.geocoding.count", validAddresses.length);
 			}else{
@@ -260,6 +286,8 @@ cerulean.rotes.dijkstra = function(startCentral, addresses){
 
 	var drawPathForBiker = function(bikerName, packs){
 		
+		if(!packs) return;
+
 		packs.unshift("central")
 		var paths = [];
 
@@ -277,7 +305,9 @@ cerulean.rotes.dijkstra = function(startCentral, addresses){
 
 		var allCooridnates = []
 		for (var i = 0; i < packs.length -1; i++) {
+			
 			var pack = chart[packs[i]][packs[i+1]];
+			if(!pack || !pack.path) continue;
 
 			for (var n = 0; n < pack.path.length; n++) {
 				var itemTag = pack.path[n];
@@ -287,6 +317,8 @@ cerulean.rotes.dijkstra = function(startCentral, addresses){
 					var fromObj = cerulean.coordinates.fromRid(itemTag);
 					if(fromObj) from = fromObj.getPosition();
 					else sys.log("not found: "+item)
+				}else if(itemTag != "central"){
+					cerulean.rotes.drawPack(from, colorForBiker[bikerName]);
 				}
 
 				allCooridnates.push({lat:from.lat(), lng:from.lng() })

@@ -73,6 +73,23 @@ mapStyles.Vertice = function(_lat, _lng){
     }
 }
 
+
+mapStyles.Package = function(_lat, _lng, _color){
+    return {
+        map: cerulean.map.view,
+        position: {lat: _lat, lng: _lng},
+        icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            fillColor: _color,
+            fillOpacity: 1.0,
+            strokeOpacity: 0.0,
+            strokeWeight: 0.0,
+            scale: 10
+        },
+        draggable: false,
+    }
+}
+
 mapStyles.DirectedEdge = [
     {
         icon:{
