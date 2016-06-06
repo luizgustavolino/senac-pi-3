@@ -51,6 +51,17 @@ cerulean.centrals.cancelRegister = function(){
 	}
 }
 
+cerulean.centrals.makeOptionsArray = function(){
+	var response = [];
+	cerulean.centrals.list.forEach(function(central){
+		response.push({
+			name: central.name,
+			next: "rotas.buscar"
+		})
+	});
+	return {options:response};
+}
+
 cerulean.centrals.searchBeforeRegister = function(tag, className){
 
 	var addressField 	= cerulean.dom.byID("central.address")

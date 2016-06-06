@@ -6,6 +6,7 @@ cerulean.nav.stack = []
 cerulean.nav.counter = 1
 cerulean.nav.onPush  = {}
 cerulean.nav.onPop  = {}
+cerulean.nav.dataFor = {}
 
 cerulean.nav.setRootController = function(templateName, data){
 	var controller = cerulean.nav.makeControllerForTemplate(templateName, data)
@@ -19,6 +20,10 @@ cerulean.nav.makeControllerForTemplate = function(templateName, data){
 	newController.templateName = templateName
 	newController.id = "nav"+(cerulean.nav.counter++)
 
+	if(cerulean.nav.dataFor[templateName]){
+		data = cerulean.nav.dataFor[templateName]()
+	}
+	
 	var tag = cerulean.dom.byID("menu-content");
 	tag.appendChild(newController);
 	cerulean.tpl.show(newController.id, templateName, data)

@@ -1,0 +1,11 @@
+<h1>Rotas</h2>
+<p>Escolha uma central</p>
+<ul>
+	{{#each options}}
+	<li>
+		<button onclick="cerulean.nav.pushController('{{next}}', {name: '{{name}}' })">
+			{{name}}<span class="chevron"/>
+		</button>
+	</li>
+	{{/each}}
+</ul>

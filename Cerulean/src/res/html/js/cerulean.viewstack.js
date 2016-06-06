@@ -76,7 +76,7 @@ cerulean.nav.onPop["central.cadastrar"] = function (){
 	cerulean.centrals.cancelRegister()
 }
 
-cerulean.nav.onPush["salvar"] = function(){
-	cerulean.storage.serialize()
+cerulean.nav.dataFor["rotas"] = function(){
+	return cerulean.centrals.makeOptionsArray()
 }
 
